@@ -15,15 +15,36 @@
         </a>
 
         <p class="text-[10px] font-bold text-slate-400 px-3 uppercase tracking-[2px] mt-6 mb-2">Inventory Management</p>
+       <a href="{{ route('admin.barang.index') }}" 
+   class="flex items-center gap-3 px-4 py-3 transition-all {{ request()->routeIs('admin.barang.*') ? 'sidebar-active shadow-md' : 'text-slate-600 hover:bg-slate-50' }}">
+    <i class="fas fa-box w-5 {{ request()->routeIs('admin.barang.*') ? 'text-white' : 'text-primary' }}"></i>
+    <span class="font-medium">Data Barang</span>
+</a>
         
-        <a href="#" class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 transition-all">
-            <i class="fas fa-box w-5 text-primary"></i>
-            <span class="font-medium">Data Barang</span>
+        <a href="{{ route('admin.kategori.index') }}" class="flex items-center gap-3 px-4 py-3 transition-all {{ request()->routeIs('admin.kategori.*') ? 'sidebar-active shadow-md' : 'text-slate-600 hover:bg-slate-50' }}">
+            <i class="fas fa-tags w-5 {{ request()->routeIs('admin.kategori.*') ? 'text-white' : 'text-primary' }}"></i>
+            <span class="font-medium">Kategori Barang</span>
         </a>
-        
-        <a href="#" class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 transition-all">
-            <i class="fas fa-tags w-5 text-primary"></i>
-            <span class="font-medium">Kategori & Satuan</span>
+
+        <a href="{{ route('admin.satuan.index') }}" class="flex items-center gap-3 px-4 py-3 transition-all {{ request()->routeIs('admin.satuan.*') ? 'sidebar-active shadow-md' : 'text-slate-600 hover:bg-slate-50' }}">
+            <i class="fas fa-balance-scale w-5 {{ request()->routeIs('admin.satuan.*') ? 'text-white' : 'text-primary' }}"></i>
+            <span class="font-medium">Master Satuan</span>
+        </a>
+
+        <p class="text-[10px] font-bold text-slate-400 px-3 uppercase tracking-[2px] mt-6 mb-2">Manajemen Stok</p>
+
+        <a href="{{ route('admin.supplier.index') }}" class="flex items-center gap-3 px-4 py-3 transition-all {{ request()->routeIs('admin.supplier.*') ? 'sidebar-active shadow-md' : 'text-slate-600 hover:bg-slate-50' }}">
+            <i class="fas fa-truck-loading w-5 {{ request()->routeIs('admin.supplier.*') ? 'text-white' : 'text-primary' }}"></i>
+            <span class="font-medium">Manajemen Supplier</span>
+        </a>
+        <a href="{{ route('admin.stok-masuk.index') }}" class="flex items-center gap-3 px-4 py-3 transition-all {{ request()->routeIs('admin.stok-masuk.*') ? 'sidebar-active shadow-md' : 'text-slate-600 hover:bg-slate-50' }}">
+            <i class="fas fa-file-invoice w-5 {{ request()->routeIs('admin.stok-masuk.*') ? 'text-white' : 'text-primary' }}"></i>
+            <span class="font-medium">Lap. Stok Masuk</span>
+        </a>
+
+        <a href="{{ route('admin.stok-keluar.index') }}" class="flex items-center gap-3 px-4 py-3 transition-all {{ request()->routeIs('admin.stok-keluar.*') ? 'sidebar-active shadow-md' : 'text-slate-600 hover:bg-slate-50' }}">
+            <i class="fas fa-file-export w-5 {{ request()->routeIs('admin.stok-keluar.*') ? 'text-white' : 'text-primary' }}"></i>
+            <span class="font-medium">Lap. Stok Keluar</span>
         </a>
 
         <p class="text-[10px] font-bold text-slate-400 px-3 uppercase tracking-[2px] mt-6 mb-2">Transaction</p>

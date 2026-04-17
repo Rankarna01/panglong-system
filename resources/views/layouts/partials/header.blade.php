@@ -8,7 +8,7 @@
     <div class="flex items-center gap-4">
         <div class="text-right hidden md:block">
             <p class="text-sm font-bold text-slate-800">{{ Auth::user()->name }}</p>
-            <p class="text-xs text-slate-500 uppercase tracking-widest">{{ Auth::user()->role->name }}</p>
+          <p class="text-xs text-slate-500 uppercase tracking-widest">{{ Auth::user()->role }}</p>
         </div>
         <div class="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-white font-bold shadow-md">
             {{ substr(Auth::user()->name, 0, 1) }}
