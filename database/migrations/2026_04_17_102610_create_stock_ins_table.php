@@ -14,7 +14,7 @@ return new class extends Migration
             $table->foreignId('supplier_id')->constrained('suppliers')->onDelete('cascade');
             $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users'); // Siapa admin yang input
-            $table->integer('qty');
+            $table->decimal('qty', 10, 2);
             $table->date('date');
             $table->string('notes')->nullable();
             $table->timestamps();

@@ -4,70 +4,75 @@
 <div class="space-y-6">
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-            <h1 class="text-2xl font-bold text-slate-800">Manajemen Supplier</h1>
-            <p class="text-slate-500 text-sm mt-1">Kelola data pemasok atau distributor bahan baku Panglong.</p>
+            <h1 class="text-2xl font-bold text-slate-800">Master Supplier</h1>
+            <p class="text-slate-500 text-sm mt-1">Kelola data mitra penyuplai bahan baku dan kontak person mereka.</p>
         </div>
         <button onclick="openModal('modalAdd')" class="bg-primary text-white px-5 py-2.5 rounded-xl font-medium hover:bg-[#4a332c] transition-all flex items-center gap-2 shadow-sm">
-            <i class="fas fa-plus"></i> Tambah Supplier
+            <i class="fas fa-handshake"></i> Tambah Supplier
         </button>
     </div>
 
-    <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
-        <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="bg-slate-50 border-b border-slate-200 text-[11px] uppercase tracking-wider text-slate-500">
-                        <th class="p-4 font-semibold w-16 text-center">No</th>
-                        <th class="p-4 font-semibold">Nama Supplier</th>
-                        <th class="p-4 font-semibold">Kontak & Alamat</th>
-                        <th class="p-4 font-semibold text-center w-28">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody class="text-sm text-slate-700">
-                    @forelse($suppliers as $index => $item)
-                    <tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors">
-                        <td class="p-4 text-center text-slate-400">{{ $index + 1 }}</td>
-                        <td class="p-4">
-                            <p class="font-bold text-slate-800">{{ $item->name }}</p>
-                            <p class="text-xs text-slate-500 mt-0.5">{{ $item->description ?? '-' }}</p>
-                        </td>
-                        <td class="p-4">
-                            <div class="flex items-center gap-2 text-slate-600 mb-1">
-                                <i class="fas fa-phone-alt text-[10px] text-primary/60"></i>
-                                <span class="font-medium">{{ $item->phone ?? 'Tidak ada kontak' }}</span>
-                            </div>
-                            <div class="flex items-start gap-2 text-xs text-slate-500">
-                                <i class="fas fa-map-marker-alt text-[10px] text-primary/60 mt-0.5"></i>
-                                <span>{{ $item->address ?? 'Alamat belum diisi' }}</span>
-                            </div>
-                        </td>
-                        <td class="p-4 text-center">
-                            <div class="flex items-center justify-center gap-2">
-                                <button onclick="editModal({{ $item }})" class="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-all">
-                                    <i class="fas fa-edit text-xs"></i>
-                                </button>
-                                <form action="{{ route('admin.supplier.destroy', $item->id) }}" method="POST" class="inline" onsubmit="return confirm('Yakin ingin menghapus supplier ini?')">
-                                    @csrf @method('DELETE')
-                                    <button type="submit" class="w-8 h-8 rounded-lg bg-red-50 text-red-500 flex items-center justify-center hover:bg-red-500 hover:text-white transition-all">
-                                        <i class="fas fa-trash text-xs"></i>
-                                    </button>
-                                </form>
-                            </div>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="4" class="p-10 text-center text-slate-400">
-                            <div class="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center mx-auto mb-3">
-                                <i class="fas fa-truck text-xl"></i>
-                            </div>
-                            Belum ada data supplier.
-                        </td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
+    <div class="bg-white p-2 rounded-2xl border border-slate-200 shadow-sm flex items-center">
+        <div class="pl-4 pr-3 text-slate-400">
+            <i class="fas fa-search"></i>
         </div>
+        <input type="text" id="searchInput" onkeyup="searchSupplier()" placeholder="Cari nama supplier atau alamat..." class="w-full py-2.5 bg-transparent outline-none text-sm text-slate-700 font-medium placeholder:font-normal">
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="supplierGrid">
+        @forelse($suppliers as $item)
+        <div class="bg-white border border-slate-200 rounded-2xl p-6 hover:shadow-lg transition-all duration-300 supplier-card flex flex-col justify-between h-full">
+            
+            <div class="flex items-center gap-4 mb-6">
+                <div class="w-14 h-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center font-bold text-xl uppercase shadow-inner">
+                    {{ substr($item->name, 0, 2) }}
+                </div>
+                <div>
+                    <h3 class="font-bold text-slate-800 text-lg supplier-name line-clamp-1" title="{{ $item->name }}">{{ $item->name }}</h3>
+                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mt-0.5 flex items-center gap-1">
+                        <i class="fas fa-user-tie"></i> Mitra Gudang
+                    </p>
+                </div>
+            </div>
+
+            <div class="space-y-3 mb-6 flex-1">
+                <div class="flex items-start gap-3 text-sm text-slate-600">
+                    <i class="fas fa-phone-alt mt-1 text-slate-400 w-4 text-center"></i>
+                    <span class="font-medium">{{ $item->phone ?? 'Tidak ada kontak' }}</span>
+                </div>
+                <div class="flex items-start gap-3 text-sm text-slate-600">
+                    <i class="fas fa-map-marker-alt mt-1 text-slate-400 w-4 text-center"></i>
+                    <span class="supplier-address line-clamp-2" title="{{ $item->address }}">{{ $item->address ?? 'Alamat belum diisi' }}</span>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-4 border-t border-slate-100">
+                <span class="px-3 py-1.5 bg-primary/5 text-primary rounded-lg text-xs font-bold tracking-wide supplier-desc">
+                    {{ $item->description ?? 'General Supplier' }}
+                </span>
+                
+                <div class="flex gap-2">
+                    <button onclick="editModal({{ $item }})" class="w-9 h-9 rounded-xl bg-slate-50 text-slate-500 hover:text-primary hover:bg-primary/10 flex items-center justify-center transition-all" title="Edit">
+                        <i class="fas fa-edit text-sm"></i>
+                    </button>
+                    <form action="{{ route('admin.supplier.destroy', $item->id) }}" method="POST" class="inline" onsubmit="return confirm('Yakin ingin menghapus supplier ini?')">
+                        @csrf @method('DELETE')
+                        <button type="submit" class="w-9 h-9 rounded-xl bg-slate-50 text-slate-500 hover:text-red-500 hover:bg-red-50 flex items-center justify-center transition-all" title="Hapus">
+                            <i class="fas fa-trash text-sm"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        @empty
+        <div class="col-span-full py-20 text-center">
+            <div class="w-20 h-20 rounded-full bg-white border border-slate-200 flex items-center justify-center mx-auto mb-4 shadow-sm">
+                <i class="fas fa-truck-loading text-3xl text-slate-300"></i>
+            </div>
+            <h3 class="text-lg font-bold text-slate-700">Belum Ada Supplier</h3>
+            <p class="text-slate-500 text-sm mt-1">Klik tombol di kanan atas untuk menambahkan mitra pertamamu.</p>
+        </div>
+        @endforelse
     </div>
 </div>
 
@@ -100,7 +105,7 @@
                 <textarea name="address" rows="3" class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm text-slate-700" placeholder="Alamat lengkap supplier..."></textarea>
             </div>
 
-            <div class="pt-4 flex justify-end gap-3 border-t border-slate-100">
+            <div class="pt-4 flex justify-end gap-3 border-t border-slate-100 mt-2">
                 <button type="button" onclick="closeModal('modalAdd')" class="px-5 py-2.5 text-slate-600 text-sm font-semibold hover:bg-slate-100 rounded-xl transition-all">Batal</button>
                 <button type="submit" class="px-5 py-2.5 bg-primary text-white text-sm font-semibold rounded-xl hover:bg-[#4a332c] transition-all shadow-sm">Simpan Data</button>
             </div>
@@ -137,7 +142,7 @@
                 <textarea name="address" id="edit_address" rows="3" class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm text-slate-700"></textarea>
             </div>
 
-            <div class="pt-4 flex justify-end gap-3 border-t border-slate-100">
+            <div class="pt-4 flex justify-end gap-3 border-t border-slate-100 mt-2">
                 <button type="button" onclick="closeModal('modalEdit')" class="px-5 py-2.5 text-slate-600 text-sm font-semibold hover:bg-slate-100 rounded-xl transition-all">Batal</button>
                 <button type="submit" class="px-5 py-2.5 bg-primary text-white text-sm font-semibold rounded-xl hover:bg-[#4a332c] transition-all shadow-sm">Simpan Perubahan</button>
             </div>
@@ -146,6 +151,7 @@
 </div>
 
 <script>
+    // FUNGSI MODAL
     function openModal(id) {
         const m = document.getElementById(id), c = document.getElementById(id+'Content');
         m.classList.remove('hidden'); m.classList.add('flex');
@@ -163,6 +169,24 @@
         document.getElementById('edit_desc').value = item.description || '';
         document.getElementById('edit_address').value = item.address || '';
         openModal('modalEdit');
+    }
+
+    // FUNGSI PENCARIAN REAL-TIME
+    function searchSupplier() {
+        let input = document.getElementById('searchInput').value.toLowerCase();
+        let cards = document.getElementsByClassName('supplier-card');
+
+        for (let i = 0; i < cards.length; i++) {
+            let name = cards[i].querySelector('.supplier-name').innerText.toLowerCase();
+            let address = cards[i].querySelector('.supplier-address').innerText.toLowerCase();
+            let desc = cards[i].querySelector('.supplier-desc').innerText.toLowerCase();
+
+            if (name.includes(input) || address.includes(input) || desc.includes(input)) {
+                cards[i].style.display = "flex";
+            } else {
+                cards[i].style.display = "none";
+            }
+        }
     }
 </script>
 @endsection

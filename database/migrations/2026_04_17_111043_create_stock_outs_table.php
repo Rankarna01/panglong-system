@@ -13,7 +13,7 @@ return new class extends Migration
             $table->string('reference')->unique(); // Contoh: TRK-20260418-001
             $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users'); // Staff yang mengeluarkan barang
-            $table->integer('qty');
+             $table->decimal('qty', 10, 2);
             $table->date('date');
             $table->string('reason'); // Alasan: Rusak, Retur, Dipakai Sendiri, dll
             $table->timestamps();

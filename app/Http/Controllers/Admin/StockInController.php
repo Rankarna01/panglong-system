@@ -10,7 +10,6 @@ class StockInController extends Controller
 {
     public function index()
     {
-        // Admin hanya melihat riwayat, jadi tidak perlu panggil Product/Supplier untuk form
         $stockIns = StockIn::with(['product', 'supplier', 'user'])->latest()->get();
 
         return view('admin.stok-masuk.index', compact('stockIns'));

@@ -22,8 +22,6 @@ class LoginController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-
-            // Pengecekan role dinamis (Asumsi kamu punya field/relasi role di tabel user)
             $role = Auth::user()->role; 
 
             if ($role === 'admin') {
