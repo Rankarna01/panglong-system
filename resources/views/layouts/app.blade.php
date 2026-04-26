@@ -32,7 +32,7 @@
         /* Loading Spinner CSS */
         .loader {
             border: 4px solid #F3F4F6;
-            border-top: 4px solid #5D4037; /* Primary Color */
+            border-top: 4px solid #5D4037;
             border-radius: 50%;
             width: 40px;
             height: 40px;
@@ -41,20 +41,21 @@
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
-<body class="text-slate-700 relative">
+<body class="text-slate-700 relative bg-surface overflow-x-hidden">
     
     <div id="page-loader" class="fixed inset-0 bg-white/80 backdrop-blur-sm z-[9999] flex flex-col items-center justify-center transition-opacity duration-300">
         <div class="loader mb-4"></div>
         <p class="text-sm font-semibold text-primary tracking-widest uppercase animate-pulse">Memuat Data...</p>
     </div>
 
-    <div class="flex min-h-screen">
+    <div class="flex min-h-screen w-full overflow-x-hidden">
+        
         @include('layouts.partials.sidebar-' . Auth::user()->role)
 
-        <div class="flex-1 flex flex-col">
+        <div class="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto">
             @include('layouts.partials.header')
 
-            <main class="p-6">
+            <main class="p-4 md:p-6 w-full">
                 @yield('content')
             </main>
         </div>
@@ -74,7 +75,6 @@
         // 2. Munculkan Loading saat form disubmit (kecuali form delete yang pakai SweetAlert)
         document.querySelectorAll('form').forEach(form => {
             form.addEventListener('submit', function() {
-                // Jika form memiliki onsubmit (seperti konfirmasi delete), jangan langsung munculkan loader
                 if(!this.hasAttribute('onsubmit')) {
                     const loader = document.getElementById('page-loader');
                     loader.classList.remove('hidden', 'opacity-0');
@@ -82,7 +82,7 @@
             });
         });
 
-        // 3. Munculkan Loading saat klik link menu sidebar
+        // 3. Munculkan Loading saat klik link menu sidebar (kecuali '#' atau target blank)
         document.querySelectorAll('a[href]:not([target="_blank"]):not([href^="#"])').forEach(link => {
             link.addEventListener('click', function(e) {
                 const loader = document.getElementById('page-loader');
@@ -96,8 +96,8 @@
         Swal.fire({
             icon: 'success',
             title: 'Berhasil!',
-            text: '{{ session('success') }}',
-            confirmButtonColor: '#5D4037', // Warna Primary
+            text: '{!! session('success') !!}',
+            confirmButtonColor: '#5D4037',
             timer: 3000,
             timerProgressBar: true
         });
