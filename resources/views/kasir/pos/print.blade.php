@@ -16,8 +16,19 @@
 </head>
 <body>
     <div class="text-center">
-        <div style="font-size: 14px; font-weight: bold; margin-bottom: 3px;">FLOWINTI PANGLONG</div>
-        <div>Jl. Contoh Alamat No. 123, Medan<br>Telp: 0812-3456-7890</div>
+        <div style="font-size: 14px; font-weight: bold; margin-bottom: 3px;">{{ strtoupper($global_setting->app_name ?? 'FLOWINTI PANGLONG') }}</div>
+        <div>
+            @if(isset($global_setting) && $global_setting->address)
+                {{ $global_setting->address }}<br>
+            @else
+                Jl. Contoh Alamat No. 123, Medan<br>
+            @endif
+            @if(isset($global_setting) && $global_setting->phone)
+                Telp: {{ $global_setting->phone }}
+            @else
+                Telp: 0812-3456-7890
+            @endif
+        </div>
     </div>
     <div class="divider"></div>
     <table>

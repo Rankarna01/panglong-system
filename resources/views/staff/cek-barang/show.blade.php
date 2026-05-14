@@ -45,21 +45,21 @@
                         $allocatedStock = 0;
                     @endphp
                     
-                    @forelse($product->racks as $rack)
+                    @forelse($product->warehouses as $warehouse)
                         @php
-                            $allocatedStock += $rack->pivot->stock;
+                            $allocatedStock += $warehouse->pivot->stock;
                         @endphp
                         <div class="flex items-center justify-between p-3 rounded-xl border border-slate-100 bg-slate-50">
                             <div>
-                                <p class="text-sm font-bold text-slate-800">{{ $rack->name }}</p>
-                                <p class="text-[10px] font-mono text-slate-500">{{ $rack->code }}</p>
+                                <p class="text-sm font-bold text-slate-800">{{ $warehouse->name }}</p>
+                                <p class="text-[10px] font-mono text-slate-500">{{ $warehouse->code }}</p>
                             </div>
-                            <span class="px-2.5 py-1 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-lg">{{ fmod($rack->pivot->stock, 1) !== 0.00 ? rtrim(rtrim($rack->pivot->stock, '0'), '.') : number_format($rack->pivot->stock, 0) }} Qty</span>
+                            <span class="px-2.5 py-1 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-lg">{{ fmod($warehouse->pivot->stock, 1) !== 0.00 ? rtrim(rtrim($warehouse->pivot->stock, '0'), '.') : number_format($warehouse->pivot->stock, 0) }} Qty</span>
                         </div>
                     @empty
                         <div class="text-center py-4">
                             <i class="fas fa-exclamation-circle text-orange-400 text-2xl mb-2"></i>
-                            <p class="text-xs text-slate-500">Barang ini belum dialokasikan ke rak manapun.</p>
+                            <p class="text-xs text-slate-500">Barang ini belum dialokasikan ke gudang manapun.</p>
                         </div>
                     @endforelse
 
@@ -71,7 +71,7 @@
                         <div class="flex items-center justify-between p-3 rounded-xl border border-orange-200 bg-orange-50 mt-2">
                             <div>
                                 <p class="text-sm font-bold text-orange-800">Area Transit / Belum Disusun</p>
-                                <p class="text-[10px] text-orange-600">Menunggu dialokasikan ke rak</p>
+                                <p class="text-[10px] text-orange-600">Menunggu dialokasikan ke gudang</p>
                             </div>
                             <span class="px-2.5 py-1 bg-orange-500 text-white text-xs font-bold rounded-lg">{{ fmod($unallocated, 1) !== 0.00 ? rtrim(rtrim($unallocated, '0'), '.') : number_format($unallocated, 0) }} Qty</span>
                         </div>

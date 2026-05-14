@@ -5,7 +5,7 @@
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
             <h1 class="text-2xl font-bold text-slate-800">Cek Data Barang & Kartu Stok</h1>
-            <p class="text-slate-500 text-sm mt-1">Pilih barang untuk melihat lokasi rak dan riwayat pergerakan stoknya.</p>
+            <p class="text-slate-500 text-sm mt-1">Pilih barang untuk melihat lokasi gudang dan riwayat pergerakan stoknya.</p>
         </div>
     </div>
 

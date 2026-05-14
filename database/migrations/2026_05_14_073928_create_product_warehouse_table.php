@@ -6,21 +6,25 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
-        Schema::create('product_rack', function (Blueprint $table) {
+        Schema::create('product_warehouse', function (Blueprint $table) {
             $table->id();
             $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
-            $table->foreignId('rack_id')->constrained('racks')->onDelete('cascade');
-            
-            // Menggunakan decimal agar mendukung stok pecahan seperti 0.5 Kg
-            $table->decimal('stock', 10, 2)->default(0); 
+            $table->foreignId('warehouse_id')->constrained('warehouses')->onDelete('cascade');
+            $table->decimal('stock', 10, 2)->default(0);
             $table->timestamps();
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
-        Schema::dropIfExists('product_rack');
+        Schema::dropIfExists('product_warehouse');
     }
 };

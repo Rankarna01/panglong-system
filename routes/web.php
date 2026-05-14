@@ -12,6 +12,12 @@ use App\Http\Controllers\Auth\LoginController;
 | Mengalihkan user yang mengakses domain utama langsung ke halaman login.
 */
 Route::get('/', function () {
+    if (Auth::check()) {
+        $role = Auth::user()->role;
+        if ($role === 'admin') return redirect()->route('admin.dashboard');
+        if ($role === 'kasir') return redirect()->route('kasir.dashboard');
+        if ($role === 'staff') return redirect()->route('gudang.dashboard');
+    }
     return redirect()->route('login');
 });
 
@@ -48,9 +54,12 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('laporan-penjualan', [\App\Http\Controllers\Admin\SalesReportController::class, 'index'])->name('laporan.penjualan');
     Route::get('riwayat-penjualan', [\App\Http\Controllers\Admin\SaleHistoryController::class, 'index'])->name('riwayat.penjualan');
     Route::resource('user', \App\Http\Controllers\Admin\UserController::class);
-    Route::resource('rak', \App\Http\Controllers\Admin\RackController::class)->except(['create', 'show', 'edit']);
-    Route::get('monitoring-rak', [\App\Http\Controllers\Admin\RackMonitorController::class, 'index'])->name('rak.monitoring');
-    Route::post('monitoring-rak/{id}/allocate', [\App\Http\Controllers\Admin\RackMonitorController::class, 'allocate'])->name('rak.allocate');
+    Route::resource('gudang', \App\Http\Controllers\Admin\WarehouseController::class)->except(['create', 'show', 'edit']);
+    Route::get('monitoring-gudang', [\App\Http\Controllers\Admin\WarehouseMonitorController::class, 'index'])->name('gudang.monitoring');
+    Route::post('monitoring-gudang/{id}/allocate', [\App\Http\Controllers\Admin\WarehouseMonitorController::class, 'allocate'])->name('gudang.allocate');
+
+    Route::get('settings', [\App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings.index');
+    Route::post('settings', [\App\Http\Controllers\Admin\SettingController::class, 'update'])->name('settings.update');
 });
 
 /*

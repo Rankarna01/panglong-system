@@ -29,9 +29,9 @@ class Product extends Model
         return $this->hasMany(UnitConversion::class);
     }
 
-    public function racks()
+    public function warehouses()
     {
-        return $this->belongsToMany(Rack::class, 'product_rack')
+        return $this->belongsToMany(Warehouse::class, 'product_warehouse')
             ->withPivot('id', 'stock')
             ->withTimestamps();
     }

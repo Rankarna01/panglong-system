@@ -30,8 +30,8 @@ class ProductCheckController extends Controller
 
     public function show($id)
     {
-        // 1. Tarik Data Barang beserta Lokasi Raknya
-        $product = Product::with(['category', 'baseUnit', 'racks'])->findOrFail($id);
+        // 1. Tarik Data Barang beserta Lokasi Gudangnya
+        $product = Product::with(['category', 'baseUnit', 'warehouses'])->findOrFail($id);
 
         // 2. Kumpulkan Histori Barang Masuk
         $stockIns = StockIn::with('user')->where('product_id', $id)->get()->map(function($item) {

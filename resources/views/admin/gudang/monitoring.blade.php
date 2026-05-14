@@ -5,8 +5,8 @@
     
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-            <h1 class="text-2xl font-bold text-slate-800">Monitoring & Alokasi Rak</h1>
-            <p class="text-slate-500 text-sm mt-1">Pantau isi setiap rak dan alokasikan barang dari area transit.</p>
+            <h1 class="text-2xl font-bold text-slate-800">Monitoring & Alokasi Gudang</h1>
+            <p class="text-slate-500 text-sm mt-1">Pantau isi setiap gudang dan alokasikan barang dari area transit.</p>
         </div>
     </div>
 
@@ -27,8 +27,8 @@
                 <i class="fas fa-truck-loading"></i>
             </div>
             <div>
-                <h3 class="text-sm font-bold text-orange-800">Area Transit (Barang Belum Masuk Rak)</h3>
-                <p class="text-[10px] text-orange-600">Alokasikan barang-barang di bawah ini ke dalam rak yang sesuai.</p>
+                <h3 class="text-sm font-bold text-orange-800">Area Transit (Barang Belum Masuk Gudang)</h3>
+                <p class="text-[10px] text-orange-600">Alokasikan barang-barang di bawah ini ke dalam gudang yang sesuai.</p>
             </div>
         </div>
         
@@ -52,58 +52,57 @@
                 </div>
             @empty
                 <div class="w-full text-center py-4 text-slate-400 text-sm font-medium flex items-center justify-center gap-2">
-                    <i class="fas fa-check-circle text-emerald-500"></i> Semua barang sudah tersusun rapi di dalam rak!
+                    <i class="fas fa-check-circle text-emerald-500"></i> Semua barang sudah tersusun rapi di dalam gudang!
                 </div>
             @endforelse
         </div>
     </div>
 
-    <h3 class="font-bold text-slate-800 text-lg mt-8 mb-4 border-b border-slate-200 pb-2">Visualisasi Gudang (Master Rak)</h3>
+    <h3 class="font-bold text-slate-800 text-lg mt-8 mb-4 border-b border-slate-200 pb-2">Visualisasi Gudang (Master Gudang)</h3>
     
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-        @foreach($racks as $rack)
-        <div onclick='openRackModal(@json($rack))' class="bg-white border border-slate-200 p-5 rounded-2xl cursor-pointer hover:border-primary hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group">
+        @foreach($warehouses as $warehouse)
+        <div onclick='openWarehouseModal(@json($warehouse))' class="bg-white border border-slate-200 p-5 rounded-2xl cursor-pointer hover:border-primary hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group">
             <div class="flex justify-between items-start mb-4">
                 <div class="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors">
                     <i class="fas fa-pallet text-xl"></i>
                 </div>
-                <span class="px-2.5 py-1 bg-slate-100 text-slate-600 rounded-lg text-[10px] font-mono font-bold">{{ $rack->code }}</span>
+                <span class="px-2.5 py-1 bg-slate-100 text-slate-600 rounded-lg text-[10px] font-mono font-bold">{{ $warehouse->code }}</span>
             </div>
-            <h4 class="font-bold text-slate-800 text-lg leading-tight group-hover:text-primary transition-colors">{{ $rack->name }}</h4>
-            <p class="text-xs text-slate-500 mt-1 line-clamp-1">{{ $rack->description ?? 'Tidak ada deskripsi' }}</p>
+            <h4 class="font-bold text-slate-800 text-lg leading-tight group-hover:text-primary transition-colors">{{ $warehouse->name }}</h4>
             
             <div class="mt-4 pt-4 border-t border-slate-100 flex justify-between items-center">
                 <span class="text-xs font-semibold text-slate-500">Total Macam Barang</span>
-                <span class="text-sm font-bold bg-secondary/10 text-secondary px-3 py-1 rounded-lg">{{ $rack->products->count() }} Item</span>
+                <span class="text-sm font-bold bg-secondary/10 text-secondary px-3 py-1 rounded-lg">{{ $warehouse->products->count() }} Item</span>
             </div>
         </div>
         @endforeach
     </div>
 </div>
 
-<div id="modalRack" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center z-50 transition-all opacity-0">
-    <div class="bg-white rounded-2xl w-full max-w-3xl mx-4 overflow-hidden transform scale-95 transition-transform shadow-2xl flex flex-col max-h-[90vh]" id="modalRackContent">
+<div id="modalWarehouse" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center z-50 transition-all opacity-0">
+    <div class="bg-white rounded-2xl w-full max-w-3xl mx-4 overflow-hidden transform scale-95 transition-transform shadow-2xl flex flex-col max-h-[90vh]" id="modalWarehouseContent">
         
         <div class="p-5 border-b border-slate-100 flex items-center justify-between bg-primary text-white shrink-0">
             <div>
                 <h3 class="text-lg font-bold flex items-center gap-2">
-                    <i class="fas fa-pallet text-white/70"></i> <span id="modalRackName">Nama Rak</span>
+                    <i class="fas fa-pallet text-white/70"></i> <span id="modalWarehouseName">Nama Gudang</span>
                 </h3>
-                <p class="text-xs text-white/70 mt-0.5 font-mono" id="modalRackCode">Kode Rak</p>
+                <p class="text-xs text-white/70 mt-0.5 font-mono" id="modalWarehouseCode">Kode Gudang</p>
             </div>
-            <button onclick="closeModal('modalRack')" class="text-white/60 hover:text-white transition-colors w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/10"><i class="fas fa-times"></i></button>
+            <button onclick="closeModal('modalWarehouse')" class="text-white/60 hover:text-white transition-colors w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/10"><i class="fas fa-times"></i></button>
         </div>
         
         <div class="flex-1 overflow-y-auto p-0 flex flex-col md:flex-row">
             
             <div class="flex-1 p-6 border-b md:border-b-0 md:border-r border-slate-100 bg-slate-50/50">
-                <h4 class="text-sm font-bold text-slate-800 uppercase tracking-wider mb-4"><i class="fas fa-box-open text-primary mr-1"></i> Isi Rak Saat Ini</h4>
-                <div class="space-y-3" id="rackContents">
+                <h4 class="text-sm font-bold text-slate-800 uppercase tracking-wider mb-4"><i class="fas fa-box-open text-primary mr-1"></i> Isi Gudang Saat Ini</h4>
+                <div class="space-y-3" id="warehouseContents">
                     </div>
             </div>
 
             <div class="w-full md:w-80 p-6 bg-white shrink-0">
-                <h4 class="text-sm font-bold text-slate-800 uppercase tracking-wider mb-4"><i class="fas fa-plus-circle text-emerald-500 mr-1"></i> Susun Barang ke Rak</h4>
+                <h4 class="text-sm font-bold text-slate-800 uppercase tracking-wider mb-4"><i class="fas fa-plus-circle text-emerald-500 mr-1"></i> Susun Barang ke Gudang</h4>
                 
                 <form id="allocateForm" method="POST" class="space-y-4">
                     @csrf
@@ -125,7 +124,7 @@
                     </div>
                     
                     <button type="submit" class="w-full mt-2 bg-primary text-white text-sm font-bold py-3 rounded-xl hover:bg-[#4a332c] transition-all shadow-md">
-                        Simpan ke Rak
+                        Simpan ke Gudang
                     </button>
                 </form>
             </div>
@@ -153,20 +152,17 @@
         setTimeout(() => { m.classList.add('hidden'); m.classList.remove('flex'); }, 300);
     }
 
-    // Fungsi Render Modal Rak
-    function openRackModal(rack) {
-        document.getElementById('modalRackName').innerText = rack.name;
-        document.getElementById('modalRackCode').innerText = rack.code;
+    function openWarehouseModal(warehouse) {
+        document.getElementById('modalWarehouseName').innerText = warehouse.name;
+        document.getElementById('modalWarehouseCode').innerText = warehouse.code;
         
-        // Set action form ke ID rak yang sedang diklik
-        document.getElementById('allocateForm').action = `/admin/monitoring-rak/${rack.id}/allocate`;
+        document.getElementById('allocateForm').action = `/admin/monitoring-gudang/${warehouse.id}/allocate`;
 
-        // Render isi rak (kiri)
-        let contentsContainer = document.getElementById('rackContents');
+        let contentsContainer = document.getElementById('warehouseContents');
         let html = '';
 
-        if(rack.products && rack.products.length > 0) {
-            rack.products.forEach(p => {
+        if(warehouse.products && warehouse.products.length > 0) {
+            warehouse.products.forEach(p => {
                 let stockFormat = p.pivot.stock % 1 !== 0 ? p.pivot.stock : Math.floor(p.pivot.stock);
                 html += `
                 <div class="bg-white border border-slate-200 p-3 rounded-xl flex items-center justify-between shadow-sm">
@@ -180,11 +176,11 @@
                 </div>`;
             });
         } else {
-            html = `<div class="text-center py-6 text-slate-400 text-sm"><i class="fas fa-box-open text-3xl mb-2 text-slate-300"></i><br>Rak masih kosong.</div>`;
+            html = `<div class="text-center py-6 text-slate-400 text-sm"><i class="fas fa-box-open text-3xl mb-2 text-slate-300"></i><br>Gudang masih kosong.</div>`;
         }
         contentsContainer.innerHTML = html;
 
-        openModal('modalRack');
+        openModal('modalWarehouse');
     }
 </script>
 @endsection

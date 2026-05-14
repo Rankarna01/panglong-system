@@ -72,29 +72,29 @@ class PosController extends Controller
                     $product->decrement('stock', $realQtyToDeduct);
 
                     // ========================================================
-                    // 3. LOGIKA WMS: AUTO-DEDUCT DARI RAK (METODE FIFO)
+                    // 3. LOGIKA WMS: AUTO-DEDUCT DARI GUDANG (METODE FIFO)
                     // ========================================================
-                    $qtyLeftToDeductFromRack = $realQtyToDeduct;
-                    $productRacks = DB::table('product_rack')
+                    $qtyLeftToDeductFromWarehouse = $realQtyToDeduct;
+                    $productWarehouses = DB::table('product_warehouse')
                         ->where('product_id', $product->id)
                         ->where('stock', '>', 0)
                         ->orderBy('created_at', 'asc')
                         ->get();
 
-                    foreach ($productRacks as $pr) {
-                        if ($qtyLeftToDeductFromRack <= 0) break; 
+                    foreach ($productWarehouses as $pw) {
+                        if ($qtyLeftToDeductFromWarehouse <= 0) break; 
 
-                        if ($pr->stock >= $qtyLeftToDeductFromRack) {
-                            DB::table('product_rack')
-                                ->where('id', $pr->id)
-                                ->decrement('stock', $qtyLeftToDeductFromRack);
+                        if ($pw->stock >= $qtyLeftToDeductFromWarehouse) {
+                            DB::table('product_warehouse')
+                                ->where('id', $pw->id)
+                                ->decrement('stock', $qtyLeftToDeductFromWarehouse);
                             
-                            $qtyLeftToDeductFromRack = 0; // Lunas
+                            $qtyLeftToDeductFromWarehouse = 0; // Lunas
                         } else {
-                            $qtyLeftToDeductFromRack -= $pr->stock;
+                            $qtyLeftToDeductFromWarehouse -= $pw->stock;
                             
-                            DB::table('product_rack')
-                                ->where('id', $pr->id)
+                            DB::table('product_warehouse')
+                                ->where('id', $pw->id)
                                 ->update(['stock' => 0]);
                         }
                     }

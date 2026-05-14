@@ -8,10 +8,16 @@
     
     <div class="p-6 flex items-center justify-between shrink-0 border-b border-slate-50 md:border-none">
         <div class="flex items-center gap-3">
-            <div class="p-2 bg-primary rounded-lg text-white shadow-sm">
-                <i class="fas fa-warehouse text-xl"></i>
-            </div>
-            <span class="text-xl font-bold tracking-tight text-primary uppercase">PANGLONG-JAYA</span>
+            @if(isset($global_setting) && $global_setting->logo_path)
+                <div class="p-1 rounded-lg shadow-sm overflow-hidden h-10 w-10 flex items-center justify-center shrink-0">
+                    <img src="{{ asset('storage/' . $global_setting->logo_path) }}" class="w-full h-full object-contain">
+                </div>
+            @else
+                <div class="p-2 bg-primary rounded-lg text-white shadow-sm shrink-0">
+                    <i class="fas fa-warehouse text-xl"></i>
+                </div>
+            @endif
+            <span class="text-xl font-bold tracking-tight text-primary uppercase line-clamp-1" title="{{ $global_setting->app_name ?? 'PANGLONG-JAYA' }}">{{ $global_setting->app_name ?? 'PANGLONG-JAYA' }}</span>
         </div>
         <button onclick="toggleSidebar()" class="md:hidden w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:bg-red-50 hover:text-red-500 transition-colors">
             <i class="fas fa-times text-xl"></i>
@@ -49,16 +55,16 @@
             <span class="font-medium">Master Satuan</span>
         </a>
 
-        <a href="{{ route('admin.rak.index') }}"
-            class="flex items-center gap-3 px-4 py-3 transition-all {{ request()->routeIs('admin.rak.index') ? 'sidebar-active shadow-md bg-primary text-white rounded-xl' : 'text-slate-600 hover:bg-slate-50 rounded-xl' }}">
-            <i class="fas fa-pallet w-5 {{ request()->routeIs('admin.rak.index') ? 'text-white' : 'text-primary' }}"></i>
-            <span class="font-medium">Master Rak</span>
+        <a href="{{ route('admin.gudang.index') }}"
+            class="flex items-center gap-3 px-4 py-3 transition-all {{ request()->routeIs('admin.gudang.index') ? 'sidebar-active shadow-md bg-primary text-white rounded-xl' : 'text-slate-600 hover:bg-slate-50 rounded-xl' }}">
+            <i class="fas fa-pallet w-5 {{ request()->routeIs('admin.gudang.index') ? 'text-white' : 'text-primary' }}"></i>
+            <span class="font-medium">Master Gudang</span>
         </a>
 
-        <a href="{{ route('admin.rak.monitoring') }}"
-            class="flex items-center gap-3 px-4 py-3 transition-all {{ request()->routeIs('admin.rak.monitoring') ? 'sidebar-active shadow-md bg-primary text-white rounded-xl' : 'text-slate-600 hover:bg-slate-50 rounded-xl' }}">
-            <i class="fas fa-binoculars w-5 {{ request()->routeIs('admin.rak.monitoring') ? 'text-white' : 'text-primary' }}"></i>
-            <span class="font-medium">Monitoring Rak</span>
+        <a href="{{ route('admin.gudang.monitoring') }}"
+            class="flex items-center gap-3 px-4 py-3 transition-all {{ request()->routeIs('admin.gudang.monitoring') ? 'sidebar-active shadow-md bg-primary text-white rounded-xl' : 'text-slate-600 hover:bg-slate-50 rounded-xl' }}">
+            <i class="fas fa-binoculars w-5 {{ request()->routeIs('admin.gudang.monitoring') ? 'text-white' : 'text-primary' }}"></i>
+            <span class="font-medium">Monitoring Gudang</span>
         </a>
 
         <p class="text-[10px] font-bold text-slate-400 px-3 uppercase tracking-[2px] mt-6 mb-2">Manajemen Stok</p>
@@ -134,6 +140,12 @@
 
 
         <p class="text-[10px] font-bold text-slate-400 px-3 uppercase tracking-[2px] mt-6 mb-2">Pengaturan</p>
+
+        <a href="{{ route('admin.settings.index') }}"
+            class="flex items-center gap-3 px-4 py-3 transition-all {{ request()->routeIs('admin.settings.*') ? 'sidebar-active shadow-md bg-primary text-white rounded-xl' : 'text-slate-600 hover:bg-slate-50 rounded-xl' }}">
+            <i class="fas fa-cog w-5 {{ request()->routeIs('admin.settings.*') ? 'text-white' : 'text-primary' }}"></i>
+            <span class="font-medium">Sistem & Identitas</span>
+        </a>
 
         <a href="{{ route('admin.user.index') }}"
             class="flex items-center gap-3 px-4 py-3 transition-all {{ request()->routeIs('admin.user.*') ? 'sidebar-active shadow-md bg-primary text-white rounded-xl' : 'text-slate-600 hover:bg-slate-50 rounded-xl' }}">

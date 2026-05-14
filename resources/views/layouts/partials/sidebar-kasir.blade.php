@@ -4,10 +4,16 @@
     
     <div class="p-6 flex items-center justify-between gap-3 shrink-0">
         <div class="flex items-center gap-3">
-            <div class="p-2 bg-primary rounded-lg text-white shadow-sm">
-                <i class="fas fa-cash-register text-xl"></i>
-            </div>
-            <span class="text-xl font-bold tracking-tight text-primary uppercase">Kasir Inti</span>
+            @if(isset($global_setting) && $global_setting->logo_path)
+                <div class="p-1 rounded-lg shadow-sm overflow-hidden h-10 w-10 flex items-center justify-center shrink-0">
+                    <img src="{{ asset('storage/' . $global_setting->logo_path) }}" class="w-full h-full object-contain">
+                </div>
+            @else
+                <div class="p-2 bg-primary rounded-lg text-white shadow-sm shrink-0">
+                    <i class="fas fa-cash-register text-xl"></i>
+                </div>
+            @endif
+            <span class="text-xl font-bold tracking-tight text-primary uppercase line-clamp-1" title="{{ $global_setting->app_name ?? 'PANGLONG-JAYA' }}">{{ $global_setting->app_name ?? 'PANGLONG-JAYA' }}</span>
         </div>
         <button onclick="toggleSidebar()" class="lg:hidden text-slate-400 hover:text-red-500 transition-colors">
             <i class="fas fa-times text-xl"></i>
