@@ -124,7 +124,7 @@
                     </div>
 
                     <button type="submit" class="w-full bg-primary text-white font-bold py-4 rounded-xl hover:bg-[#4a332c] hover:shadow-lg hover:shadow-primary/30 transition-all duration-300 flex items-center justify-center gap-2 mt-4 group">
-                        <span>Masuk Sistem</span>
+                        <span>Masuk</span>
                         <i class="fas fa-arrow-right text-sm transform group-hover:translate-x-1 transition-transform"></i>
                     </button>
                 </form>
