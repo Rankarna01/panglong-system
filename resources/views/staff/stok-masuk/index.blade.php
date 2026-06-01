@@ -57,6 +57,9 @@
                             <span class="px-3 py-1.5 bg-emerald-50 text-emerald-600 font-bold text-lg rounded-xl">+ {{ $item->qty }} <span class="text-xs font-normal">{{ $item->product->baseUnit->short_name ?? '' }}</span></span>
                         </td>
                         <td class="p-4 text-center">
+                            <button onclick="openEditModal({{ $item->id }}, '{{ $item->date }}', '{{ $item->supplier_id }}', '{{ $item->product_id }}', '{{ $item->qty }}', '{{ $item->payment_method }}', '{{ explode(' | Input:', $item->notes)[0] }}')" class="w-8 h-8 rounded-lg bg-blue-50 text-blue-500 flex items-center justify-center hover:bg-blue-500 hover:text-white transition-all mr-1" title="Edit">
+                                <i class="fas fa-edit text-xs"></i>
+                            </button>
                             <form action="{{ route('gudang.stok-masuk.destroy', $item->id) }}" method="POST" class="inline" onsubmit="return confirm('Batal input? Stok barang akan dikurangi kembali.')">
                                 @csrf @method('DELETE')
                                 <button type="submit" class="w-8 h-8 rounded-lg bg-red-50 text-red-500 flex items-center justify-center hover:bg-red-500 hover:text-white transition-all" title="Batal & Kurangi Stok">
@@ -106,7 +109,6 @@
                         <option value="">Cari/Pilih Barang...</option>
                         @foreach($products as $prod)
                             @php
-                                // Susun JSON array berisi Satuan Dasar + Satuan Grosirnya
                                 $validUnits = [
                                     ['id' => $prod->unit_id, 'name' => ($prod->baseUnit->name ?? 'Base') . ' (Satuan Dasar)']
                                 ];
@@ -156,6 +158,87 @@
     </div>
 </div>
 
+<div id="modalEdit" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden items-center justify-center z-50 transition-all opacity-0">
+    <div class="bg-white rounded-2xl w-full max-w-lg mx-4 overflow-hidden transform scale-95 transition-transform flex flex-col max-h-[90vh]" id="modalEditContent">
+        <div class="p-5 border-b border-slate-100 flex items-center justify-between bg-surface shrink-0">
+            <h3 class="text-base font-bold text-primary">Edit Penerimaan Barang</h3>
+            <button onclick="closeModal('modalEdit')" class="text-slate-400 hover:text-red-500 transition-colors w-8 h-8 flex items-center justify-center rounded-lg hover:bg-red-50"><i class="fas fa-times"></i></button>
+        </div>
+        
+        <div class="p-6 overflow-y-auto">
+            <form id="editForm" method="POST" class="space-y-5">
+                @csrf
+                @method('PUT')
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 mb-1.5 uppercase">Tanggal Masuk</label>
+                        <input type="date" name="date" id="edit_date" required class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:border-primary outline-none text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 mb-1.5 uppercase">Supplier</label>
+                        <select name="supplier_id" id="edit_supplier_id" required class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:border-primary outline-none text-sm">
+                            <option value="">Pilih Supplier...</option>
+                            @foreach($suppliers as $sup) <option value="{{ $sup->id }}">{{ $sup->name }}</option> @endforeach
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-primary mb-1.5 uppercase">Pilih Barang</label>
+                    <select name="product_id" id="editProductSelect" onchange="updateEditUnitOptions()" required class="w-full px-4 py-2.5 bg-primary/5 border border-primary/20 rounded-xl focus:ring-2 focus:border-primary outline-none text-sm font-bold text-slate-700">
+                        <option value="">Cari/Pilih Barang...</option>
+                        @foreach($products as $prod)
+                            @php
+                                $validUnits = [
+                                    ['id' => $prod->unit_id, 'name' => ($prod->baseUnit->name ?? 'Base') . ' (Satuan Dasar)']
+                                ];
+                                foreach($prod->conversions as $conv) {
+                                    $validUnits[] = ['id' => $conv->unit_id, 'name' => ($conv->unit->name ?? 'Grosir') . ' (Isi '.$conv->multiplier.')'];
+                                }
+                            @endphp
+                            <option value="{{ $prod->id }}" data-units="{{ json_encode($validUnits) }}">{{ $prod->code }} - {{ $prod->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 p-4 bg-slate-50 rounded-xl border border-slate-100">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 mb-1.5 uppercase">Jumlah Masuk</label>
+                        <input type="number" step="0.01" name="input_qty" id="edit_input_qty" min="0.1" required class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:border-primary outline-none text-lg font-bold text-slate-800" placeholder="0">
+                        <p class="text-[10px] text-red-500 mt-1 italic">*Jumlah ini akan dihitung ulang</p>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-emerald-600 mb-1.5 uppercase">Satuan Diterima</label>
+                        <select name="unit_id" id="editUnitSelect" required class="w-full px-4 py-2.5 bg-white border border-emerald-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm text-slate-700 disabled:opacity-50 disabled:bg-slate-100">
+                            <option value="">Pilih Barang Dulu...</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 mb-1.5 uppercase">Pembayaran</label>
+                        <select name="payment_method" id="edit_payment_method" required class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl outline-none text-sm">
+                            <option value="cash">Tunai (Cash)</option><option value="transfer">Transfer Bank</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 mb-1.5 uppercase">Catatan Surat Jalan</label>
+                        <input type="text" name="notes" id="edit_notes" class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl outline-none text-sm" placeholder="Opsional...">
+                    </div>
+                </div>
+
+                <div class="pt-4 flex justify-end gap-3 border-t border-slate-100 mt-2">
+                    <button type="button" onclick="closeModal('modalEdit')" class="px-5 py-2.5 text-slate-600 text-sm font-semibold hover:bg-slate-100 rounded-xl">Batal</button>
+                    <button type="submit" class="px-5 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700 flex items-center gap-2">
+                        <i class="fas fa-save"></i> Update & Hitung Stok
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <script>
     function openModal(id) {
         const m = document.getElementById(id), c = document.getElementById(id+'Content');
@@ -181,7 +264,6 @@
             return;
         }
 
-        // Ambil data satuan dari atribut HTML
         let units = JSON.parse(selectedOption.getAttribute('data-units'));
         
         let html = '';
@@ -190,7 +272,58 @@
         });
         
         unitSelect.innerHTML = html;
-        unitSelect.disabled = false; // Aktifkan dropdown satuan
+        unitSelect.disabled = false;
+    }
+
+    function updateEditUnitOptions() {
+        let prodSelect = document.getElementById('editProductSelect');
+        let unitSelect = document.getElementById('editUnitSelect');
+        
+        let selectedOption = prodSelect.options[prodSelect.selectedIndex];
+        
+        if(!selectedOption.value) {
+            unitSelect.innerHTML = '<option value="">Pilih Barang Dulu...</option>';
+            unitSelect.disabled = true;
+            return;
+        }
+
+        let units = JSON.parse(selectedOption.getAttribute('data-units'));
+        
+        let html = '';
+        units.forEach(u => {
+            html += `<option value="${u.id}">${u.name}</option>`;
+        });
+        
+        unitSelect.innerHTML = html;
+        unitSelect.disabled = false;
+    }
+
+    function openEditModal(id, date, supplier_id, product_id, qty, payment_method, notes) {
+        document.getElementById('editForm').action = `/gudang/stok-masuk/${id}`;
+        
+        // Format date from YYYY-MM-DD HH:mm:ss to YYYY-MM-DD
+        let formattedDate = date.split(' ')[0];
+        document.getElementById('edit_date').value = formattedDate;
+        
+        document.getElementById('edit_supplier_id').value = supplier_id;
+        document.getElementById('editProductSelect').value = product_id;
+        document.getElementById('edit_payment_method').value = payment_method;
+        
+        // Clean notes if " | Input:" is there
+        if (notes && notes !== 'null') {
+            document.getElementById('edit_notes').value = notes.trim();
+        } else {
+            document.getElementById('edit_notes').value = '';
+        }
+
+        updateEditUnitOptions();
+        
+        // As for qty and unit, it's safer to just set qty and the base unit for simplicity,
+        // because we don't store input_qty natively in DB, we store multiplied realQty.
+        // We can just populate input_qty with qty and let user re-select unit if they want.
+        document.getElementById('edit_input_qty').value = qty;
+        
+        openModal('modalEdit');
     }
 </script>
 @endsection

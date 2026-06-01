@@ -48,10 +48,13 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('satuan', \App\Http\Controllers\Admin\UnitController::class);
     Route::resource('supplier', \App\Http\Controllers\Admin\SupplierController::class);
     Route::resource('stok-masuk', \App\Http\Controllers\Admin\StockInController::class)->only(['index']);
+    Route::get('stok-masuk/export', [\App\Http\Controllers\Admin\StockInController::class, 'export'])->name('stok-masuk.export');
     Route::resource('stok-keluar', \App\Http\Controllers\Admin\StockOutController::class)->only(['index']);
-    Route::get('laporan-stok-opname', [\App\Http\Controllers\Admin\StockOpnameController::class, 'index'])->name('laporan.stok-opname');
+    Route::get('stok-keluar/export', [\App\Http\Controllers\Admin\StockOutController::class, 'export'])->name('stok-keluar.export');
     Route::get('laporan-stok', [\App\Http\Controllers\Admin\StockReportController::class, 'index'])->name('laporan.stok');
+    Route::get('laporan-stok/export', [\App\Http\Controllers\Admin\StockReportController::class, 'export'])->name('laporan.stok.export');
     Route::get('laporan-penjualan', [\App\Http\Controllers\Admin\SalesReportController::class, 'index'])->name('laporan.penjualan');
+    Route::get('laporan-penjualan/export', [\App\Http\Controllers\Admin\SalesReportController::class, 'export'])->name('laporan.penjualan.export');
     Route::get('riwayat-penjualan', [\App\Http\Controllers\Admin\SaleHistoryController::class, 'index'])->name('riwayat.penjualan');
     Route::resource('user', \App\Http\Controllers\Admin\UserController::class);
     Route::resource('gudang', \App\Http\Controllers\Admin\WarehouseController::class)->except(['create', 'show', 'edit']);
@@ -85,11 +88,12 @@ Route::middleware(['auth', 'role:kasir'])->prefix('kasir')->name('kasir.')->grou
 */
 Route::middleware(['auth', 'role:staff'])->prefix('gudang')->name('gudang.')->group(function () {
     Route::get('/dashboard', [\App\Http\Controllers\Staff\DashboardController::class, 'index'])->name('dashboard');
-    Route::resource('stok-masuk', \App\Http\Controllers\Staff\StockInController::class)->except(['create', 'edit', 'update', 'show']);
+    Route::resource('stok-masuk', \App\Http\Controllers\Staff\StockInController::class)->except(['create', 'show']);
     Route::resource('stok-keluar', \App\Http\Controllers\Staff\StockOutController::class)->except(['create', 'edit', 'update', 'show']);
-    Route::resource('stok-opname', \App\Http\Controllers\Staff\StockOpnameController::class)->except(['create', 'edit', 'update', 'show']);
     
     // 👇 UBAH BAGIAN INI (Hapus kata gudang. di dalam name) 👇
     Route::get('cek-barang', [\App\Http\Controllers\Staff\ProductCheckController::class, 'index'])->name('cek-barang.index');
     Route::get('cek-barang/{id}', [\App\Http\Controllers\Staff\ProductCheckController::class, 'show'])->name('cek-barang.show');
+    
+    Route::get('supplier', [\App\Http\Controllers\Staff\SupplierController::class, 'index'])->name('supplier.index');
 });

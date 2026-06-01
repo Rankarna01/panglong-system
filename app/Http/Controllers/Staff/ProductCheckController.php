@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\StockIn;
 use App\Models\StockOut;
-use App\Models\StockOpname;
 use App\Models\SaleDetail;
 use Illuminate\Http\Request;
 
@@ -59,21 +58,6 @@ class ProductCheckController extends Controller
             ];
         });
 
-        // 4. Kumpulkan Histori Opname
-        $opnames = StockOpname::with('user')->where('product_id', $id)->get()->map(function($item) {
-            $prefix = $item->difference > 0 ? '+' : '';
-            $color = $item->difference > 0 ? 'emerald' : ($item->difference < 0 ? 'red' : 'slate');
-            return [
-                'date' => $item->created_at,
-                'type' => 'Opname',
-                'reference' => $item->reference,
-                'description' => 'Penyesuaian Stok. Catatan: ' . ($item->notes ?? '-'),
-                'qty_change' => $prefix . $item->difference,
-                'user' => $item->user->name ?? 'Sistem',
-                'color' => $color
-            ];
-        });
-
         // 5. Kumpulkan Histori Penjualan (Kasir POS)
         $sales = SaleDetail::with(['sale.user'])->where('product_id', $id)->get()->map(function($item) {
             return [
@@ -91,7 +75,6 @@ class ProductCheckController extends Controller
         $history = collect()
             ->merge($stockIns)
             ->merge($stockOuts)
-            ->merge($opnames)
             ->merge($sales)
             ->sortByDesc('date');
 

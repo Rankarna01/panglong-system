@@ -77,6 +77,66 @@ class StockInController extends Controller
         }
     }
 
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'supplier_id' => 'required',
+            'product_id' => 'required',
+            'unit_id' => 'required',
+            'input_qty' => 'required|numeric|min:0.1',
+            'date' => 'required|date',
+            'payment_method' => 'required|in:cash,transfer',
+        ]);
+
+        try {
+            DB::transaction(function () use ($request, $id) {
+                $stockIn = StockIn::findOrFail($id);
+                $oldProduct = Product::findOrFail($stockIn->product_id);
+                
+                // Revert stok lama
+                $oldProduct->decrement('stock', $stockIn->qty);
+
+                // Proses stok baru
+                $newProduct = Product::with('baseUnit')->findOrFail($request->product_id);
+                
+                $multiplier = 1;
+                $unitName = $newProduct->baseUnit->name ?? 'Satuan';
+                if ($request->unit_id != $newProduct->unit_id) {
+                    $conversion = UnitConversion::with('unit')
+                        ->where('product_id', $newProduct->id)
+                        ->where('unit_id', $request->unit_id)
+                        ->first();
+
+                    if (!$conversion) {
+                        throw new \Exception("Aturan konversi satuan tidak ditemukan!");
+                    }
+                    $multiplier = $conversion->multiplier;
+                    $unitName = $conversion->unit->name;
+                }
+
+                $realQty = $request->input_qty * $multiplier;
+                $historyNote = "Input: " . $request->input_qty . " " . $unitName;
+                $finalNotes = $request->notes ? $request->notes . " | " . $historyNote : $historyNote;
+
+                $stockIn->update([
+                    'supplier_id' => $request->supplier_id,
+                    'product_id' => $request->product_id,
+                    'qty' => $realQty,
+                    'date' => $request->date,
+                    'payment_method' => $request->payment_method,
+                    'notes' => $finalNotes,
+                ]);
+
+                // Tambahkan stok baru
+                $newProduct->increment('stock', $realQty);
+            });
+
+            return redirect()->back()->with('success', 'Penerimaan berhasil diupdate! Stok otomatis disesuaikan.');
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors('Gagal mengupdate stok: ' . $e->getMessage());
+        }
+    }
+
     public function destroy($id)
     {
         try {

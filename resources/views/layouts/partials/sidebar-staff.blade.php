@@ -36,8 +36,8 @@
     <span class="font-medium">Cek Data Barang</span>
 </a>
 
-        <a href="#" class="flex items-center gap-3 px-4 py-3 transition-all text-slate-600 hover:bg-slate-50 rounded-xl">
-            <i class="fas fa-truck-loading w-5 text-primary"></i>
+       <a href="{{ route('gudang.supplier.index') }}" class="flex items-center gap-3 px-4 py-3 transition-all {{ request()->routeIs('gudang.supplier.*') ? 'sidebar-active shadow-md bg-primary text-white rounded-xl' : 'text-slate-600 hover:bg-slate-50 rounded-xl' }}">
+            <i class="fas fa-truck-loading w-5 {{ request()->routeIs('gudang.supplier.*') ? 'text-white' : 'text-primary' }}"></i>
             <span class="font-medium">Data Supplier</span>
         </a>
 
@@ -53,10 +53,6 @@
             <span class="font-medium">Stok Keluar (Retur/Rusak)</span>
         </a>
 
-       <a href="{{ route('gudang.stok-opname.index') }}" class="flex items-center gap-3 px-4 py-3 transition-all {{ request()->routeIs('gudang.stok-opname.*') ? 'sidebar-active shadow-md rounded-xl' : 'text-slate-600 hover:bg-slate-50 rounded-xl' }}">
-            <i class="fas fa-clipboard-check w-5 {{ request()->routeIs('gudang.stok-opname.*') ? 'text-white' : 'text-primary' }}"></i>
-            <span class="font-medium">Stok Opname</span>
-        </a>
     </nav>
 
     <div class="p-4 border-t shrink-0">

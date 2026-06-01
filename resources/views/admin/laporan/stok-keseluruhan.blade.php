@@ -6,7 +6,10 @@
             <h1 class="text-2xl font-bold text-slate-800">Laporan Sisa Stok</h1>
             <p class="text-slate-500 text-sm">Rekapitulasi sisa persediaan barang saat ini.</p>
         </div>
-        <button onclick="window.print()" class="bg-white border text-slate-600 px-5 py-2.5 rounded-xl hover:bg-slate-50 flex gap-2"><i class="fas fa-print mt-1"></i> Cetak</button>
+        <div class="flex gap-2">
+            <a href="{{ route('admin.laporan.stok.export', ['format' => 'pdf']) }}" class="bg-red-50 text-red-600 border border-red-100 px-4 py-2.5 rounded-xl hover:bg-red-500 hover:text-white transition flex gap-2 text-sm font-bold"><i class="fas fa-file-pdf mt-0.5"></i> PDF</a>
+            <a href="{{ route('admin.laporan.stok.export', ['format' => 'excel']) }}" class="bg-emerald-50 text-emerald-600 border border-emerald-100 px-4 py-2.5 rounded-xl hover:bg-emerald-500 hover:text-white transition flex gap-2 text-sm font-bold"><i class="fas fa-file-excel mt-0.5"></i> Excel</a>
+        </div>
     </div>
     
     <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
