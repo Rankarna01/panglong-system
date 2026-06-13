@@ -18,7 +18,7 @@ class SupplierController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'phone' => 'nullable|string|max:20',
+            'phone' => 'nullable|regex:/^[0-9]+$/|max:20',
             'address' => 'nullable|string'
         ]);
 
@@ -30,13 +30,15 @@ class SupplierController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'phone' => 'nullable|string|max:20',
+            'phone' => 'nullable|regex:/^[0-9]+$/|max:20',
             'address' => 'nullable|string'
         ]);
 
         Supplier::findOrFail($id)->update($request->all());
         return redirect()->back()->with('success', 'Data Supplier berhasil diperbarui!');
     }
+
+
 
     public function destroy($id)
     {

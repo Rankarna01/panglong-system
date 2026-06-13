@@ -92,7 +92,7 @@
             <div class="grid grid-cols-2 gap-4">
                 <div>
                     <label class="block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wider">Nomor Telepon/WA</label>
-                    <input type="text" name="phone" class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm text-slate-700" placeholder="0812...">
+                    <input type="text" name="phone" oninput="this.value = this.value.replace(/[^0-9]/g, '')" class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm text-slate-700" placeholder="0812...">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wider">Keterangan (Opsional)</label>
@@ -129,7 +129,7 @@
             <div class="grid grid-cols-2 gap-4">
                 <div>
                     <label class="block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wider">Nomor Telepon/WA</label>
-                    <input type="text" name="phone" id="edit_phone" class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm text-slate-700">
+                    <input type="text" name="phone" id="edit_phone" oninput="this.value = this.value.replace(/[^0-9]/g, '')" class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm text-slate-700">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wider">Keterangan (Opsional)</label>
