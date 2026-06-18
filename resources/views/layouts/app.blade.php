@@ -106,5 +106,27 @@
         });
     </script>
     @endif
+
+    @if($errors->any())
+    <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Gagal Menyimpan!',
+            html: '{!! implode("<br>", $errors->all()) !!}',
+            confirmButtonColor: '#5D4037'
+        });
+    </script>
+    @endif
+
+    @if(session('error'))
+    <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Gagal!',
+            text: '{!! session('error') !!}',
+            confirmButtonColor: '#5D4037'
+        });
+    </script>
+    @endif
 </body>
 </html>
