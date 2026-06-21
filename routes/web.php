@@ -5,6 +5,33 @@ use Illuminate\Support\Facades\Route;
 // --- CONTROLLER LOGIN ---
 use App\Http\Controllers\Auth\LoginController;
 
+// --- CONTROLLER ADMIN ---
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\UnitController;
+use App\Http\Controllers\Admin\SupplierController as AdminSupplierController;
+use App\Http\Controllers\Admin\StockInController as AdminStockInController;
+use App\Http\Controllers\Admin\StockOutController as AdminStockOutController;
+use App\Http\Controllers\Admin\StockReportController;
+use App\Http\Controllers\Admin\SalesReportController;
+use App\Http\Controllers\Admin\SaleHistoryController as AdminSaleHistoryController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\WarehouseController;
+use App\Http\Controllers\Admin\WarehouseMonitorController;
+use App\Http\Controllers\Admin\SettingController;
+
+// --- CONTROLLER KASIR ---
+use App\Http\Controllers\Kasir\PosController;
+use App\Http\Controllers\Kasir\SaleHistoryController as KasirSaleHistoryController;
+
+// --- CONTROLLER STAFF GUDANG ---
+use App\Http\Controllers\Staff\DashboardController as StaffDashboardController;
+use App\Http\Controllers\Staff\StockInController as StaffStockInController;
+use App\Http\Controllers\Staff\StockOutController as StaffStockOutController;
+use App\Http\Controllers\Staff\ProductCheckController;
+use App\Http\Controllers\Staff\SupplierController as StaffSupplierController;
+
 /*
 |--------------------------------------------------------------------------
 | ROOT ROUTE (Solusi 404)
@@ -39,30 +66,30 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout')->midd
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
     
-    Route::resource('barang', \App\Http\Controllers\Admin\ProductController::class);
-    Route::post('barang/{id}/konversi', [\App\Http\Controllers\Admin\ProductController::class, 'storeConversion'])->name('barang.konversi.store');
-    Route::delete('konversi/{id}', [\App\Http\Controllers\Admin\ProductController::class, 'destroyConversion'])->name('barang.konversi.destroy');
-    Route::resource('kategori', \App\Http\Controllers\Admin\CategoryController::class);
-    Route::resource('satuan', \App\Http\Controllers\Admin\UnitController::class);
-    Route::resource('supplier', \App\Http\Controllers\Admin\SupplierController::class);
-    Route::resource('stok-masuk', \App\Http\Controllers\Admin\StockInController::class)->only(['index']);
-    Route::get('stok-masuk/export', [\App\Http\Controllers\Admin\StockInController::class, 'export'])->name('stok-masuk.export');
-    Route::resource('stok-keluar', \App\Http\Controllers\Admin\StockOutController::class)->only(['index']);
-    Route::get('stok-keluar/export', [\App\Http\Controllers\Admin\StockOutController::class, 'export'])->name('stok-keluar.export');
-    Route::get('laporan-stok', [\App\Http\Controllers\Admin\StockReportController::class, 'index'])->name('laporan.stok');
-    Route::get('laporan-stok/export', [\App\Http\Controllers\Admin\StockReportController::class, 'export'])->name('laporan.stok.export');
-    Route::get('laporan-penjualan', [\App\Http\Controllers\Admin\SalesReportController::class, 'index'])->name('laporan.penjualan');
-    Route::get('laporan-penjualan/export', [\App\Http\Controllers\Admin\SalesReportController::class, 'export'])->name('laporan.penjualan.export');
-    Route::get('riwayat-penjualan', [\App\Http\Controllers\Admin\SaleHistoryController::class, 'index'])->name('riwayat.penjualan');
-    Route::resource('user', \App\Http\Controllers\Admin\UserController::class);
-    Route::resource('gudang', \App\Http\Controllers\Admin\WarehouseController::class)->except(['create', 'show', 'edit']);
-    Route::get('monitoring-gudang', [\App\Http\Controllers\Admin\WarehouseMonitorController::class, 'index'])->name('gudang.monitoring');
-    Route::post('monitoring-gudang/{id}/allocate', [\App\Http\Controllers\Admin\WarehouseMonitorController::class, 'allocate'])->name('gudang.allocate');
+    Route::resource('barang', ProductController::class);
+    Route::post('barang/{id}/konversi', [ProductController::class, 'storeConversion'])->name('barang.konversi.store');
+    Route::delete('konversi/{id}', [ProductController::class, 'destroyConversion'])->name('barang.konversi.destroy');
+    Route::resource('kategori', CategoryController::class);
+    Route::resource('satuan', UnitController::class);
+    Route::resource('supplier', AdminSupplierController::class);
+    Route::resource('stok-masuk', AdminStockInController::class)->only(['index']);
+    Route::get('stok-masuk/export', [AdminStockInController::class, 'export'])->name('stok-masuk.export');
+    Route::resource('stok-keluar', AdminStockOutController::class)->only(['index']);
+    Route::get('stok-keluar/export', [AdminStockOutController::class, 'export'])->name('stok-keluar.export');
+    Route::get('laporan-stok', [StockReportController::class, 'index'])->name('laporan.stok');
+    Route::get('laporan-stok/export', [StockReportController::class, 'export'])->name('laporan.stok.export');
+    Route::get('laporan-penjualan', [SalesReportController::class, 'index'])->name('laporan.penjualan');
+    Route::get('laporan-penjualan/export', [SalesReportController::class, 'export'])->name('laporan.penjualan.export');
+    Route::get('riwayat-penjualan', [AdminSaleHistoryController::class, 'index'])->name('riwayat.penjualan');
+    Route::resource('user', UserController::class);
+    Route::resource('gudang', WarehouseController::class)->except(['create', 'show', 'edit']);
+    Route::get('monitoring-gudang', [WarehouseMonitorController::class, 'index'])->name('gudang.monitoring');
+    Route::post('monitoring-gudang/{id}/allocate', [WarehouseMonitorController::class, 'allocate'])->name('gudang.allocate');
 
-    Route::get('settings', [\App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings.index');
-    Route::post('settings', [\App\Http\Controllers\Admin\SettingController::class, 'update'])->name('settings.update');
+    Route::get('settings', [SettingController::class, 'index'])->name('settings.index');
+    Route::post('settings', [SettingController::class, 'update'])->name('settings.update');
 });
 
 /*
@@ -73,12 +100,12 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 Route::middleware(['auth', 'role:kasir'])->prefix('kasir')->name('kasir.')->group(function () {
     Route::get('/dashboard', function() { return redirect()->route('kasir.pos.index'); })->name('dashboard');
 
-    Route::resource('pos', \App\Http\Controllers\Kasir\PosController::class)->only(['index', 'store']);
+    Route::resource('pos', PosController::class)->only(['index', 'store']);
     
     // 👇 Tambahkan ini untuk Cetak Struk 👇
-    Route::get('pos/print/{id}', [\App\Http\Controllers\Kasir\PosController::class, 'print'])->name('pos.print');
+    Route::get('pos/print/{id}', [PosController::class, 'print'])->name('pos.print');
     
-    Route::get('riwayat-penjualan', [\App\Http\Controllers\Kasir\SaleHistoryController::class, 'index'])->name('riwayat-penjualan');
+    Route::get('riwayat-penjualan', [KasirSaleHistoryController::class, 'index'])->name('riwayat-penjualan');
 });
 
 /*
@@ -87,13 +114,13 @@ Route::middleware(['auth', 'role:kasir'])->prefix('kasir')->name('kasir.')->grou
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'role:staff'])->prefix('gudang')->name('gudang.')->group(function () {
-    Route::get('/dashboard', [\App\Http\Controllers\Staff\DashboardController::class, 'index'])->name('dashboard');
-    Route::resource('stok-masuk', \App\Http\Controllers\Staff\StockInController::class)->except(['create', 'show']);
-    Route::resource('stok-keluar', \App\Http\Controllers\Staff\StockOutController::class)->except(['create', 'edit', 'update', 'show']);
+    Route::get('/dashboard', [StaffDashboardController::class, 'index'])->name('dashboard');
+    Route::resource('stok-masuk', StaffStockInController::class)->except(['create', 'show']);
+    Route::resource('stok-keluar', StaffStockOutController::class)->except(['create', 'edit', 'update', 'show']);
     
     // 👇 UBAH BAGIAN INI (Hapus kata gudang. di dalam name) 👇
-    Route::get('cek-barang', [\App\Http\Controllers\Staff\ProductCheckController::class, 'index'])->name('cek-barang.index');
-    Route::get('cek-barang/{id}', [\App\Http\Controllers\Staff\ProductCheckController::class, 'show'])->name('cek-barang.show');
+    Route::get('cek-barang', [ProductCheckController::class, 'index'])->name('cek-barang.index');
+    Route::get('cek-barang/{id}', [ProductCheckController::class, 'show'])->name('cek-barang.show');
     
-    Route::get('supplier', [\App\Http\Controllers\Staff\SupplierController::class, 'index'])->name('supplier.index');
+    Route::get('supplier', [StaffSupplierController::class, 'index'])->name('supplier.index');
 });
