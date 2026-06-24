@@ -34,7 +34,7 @@
                             <span class="px-3 py-1.5 bg-slate-100 text-slate-600 rounded-lg text-xs font-medium"><i class="fas fa-user-circle text-[10px] mr-1 text-primary/60"></i> {{ $item->user->name ?? '-' }}</span>
                         </td>
                         <td class="p-4 text-center">
-                            <span class="font-bold text-slate-800">{{ $item->details->count() }}</span> <span class="text-xs text-slate-500">Macam</span>
+                            <span class="font-bold text-slate-800">{{ $item->details->count() }}</span> <span class="text-xs text-slate-500">Qyt</span>
                         </td>
                         <td class="p-4 text-right">
                             <p class="font-bold text-slate-800">Rp {{ number_format($item->total_amount, 0, ',', '.') }}</p>

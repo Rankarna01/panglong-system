@@ -72,7 +72,7 @@
             <h4 class="font-bold text-slate-800 text-lg leading-tight group-hover:text-primary transition-colors">{{ $warehouse->name }}</h4>
             
             <div class="mt-4 pt-4 border-t border-slate-100 flex justify-between items-center">
-                <span class="text-xs font-semibold text-slate-500">Total Macam Barang</span>
+                <span class="text-xs font-semibold text-slate-500">Total Qty Barang</span>
                 <span class="text-sm font-bold bg-secondary/10 text-secondary px-3 py-1 rounded-lg">{{ $warehouse->products->count() }} Item</span>
             </div>
         </div>

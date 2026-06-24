@@ -9,8 +9,8 @@
         </div>
         <button onclick="openModal('modalAdd')" class="bg-primary text-white px-5 py-2.5 rounded-xl font-medium hover:bg-[#4a332c] transition-all flex items-center gap-2 shadow-sm">
             <i class="fas fa-plus"></i> Tambah Barang
-        </button>
-    </div>
+        </button> 
+    </div> 
 
     <div class="bg-orange-50 border border-orange-200 text-orange-700 p-4 rounded-xl flex items-start gap-3 text-sm">
         <i class="fas fa-info-circle mt-0.5 text-orange-500"></i>
@@ -106,7 +106,7 @@
 <div id="modalAdd" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden items-center justify-center z-50 transition-all opacity-0">
     <div class="bg-white rounded-2xl w-full max-w-lg mx-4 overflow-hidden transform scale-95 transition-transform" id="modalAddContent">
         <div class="p-5 border-b border-slate-100 flex items-center justify-between bg-surface">
-            <h3 class="text-base font-bold text-primary">Tambah Barang Baru</h3>
+            <h3 class="text-base font-bold text-primary">Tambah Barang Baru</h3> 
             <button onclick="closeModal('modalAdd')" class="text-slate-400 hover:text-red-500 transition-colors w-8 h-8 flex items-center justify-center rounded-lg hover:bg-red-50"><i class="fas fa-times"></i></button>
         </div>
         

@@ -82,7 +82,7 @@
                         <td class="p-4 font-bold text-primary">{{ $item->invoice }}</td>
                         <td class="p-4 text-slate-600">{{ \Carbon\Carbon::parse($item->created_at)->format('d M Y, H:i') }}</td>
                         <td class="p-4 text-center">
-                            <span class="px-3 py-1 bg-slate-100 text-slate-600 rounded-lg text-xs font-bold">{{ $item->details->count() }} Macam</span>
+                            <span class="px-3 py-1 bg-slate-100 text-slate-600 rounded-lg text-xs font-bold">{{ $item->details->count() }} Qyt</span>
                         </td>
                         <td class="p-4 text-right font-bold text-slate-800">
                             Rp {{ number_format($item->total_amount, 0, ',', '.') }}

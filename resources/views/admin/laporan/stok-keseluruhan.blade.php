@@ -17,7 +17,7 @@
             <thead>
                 <tr class="bg-slate-50 border-b text-[11px] uppercase text-slate-500">
                     <th class="p-4 text-center w-16">No</th>
-                    <th class="p-4">Nama Barang</th>
+                    <t h class="p-4">Nama Barang</th>
                     <th class="p-4">Kategori</th>
                     <th class="p-4 text-right">Harga (Rp)</th>
                     <th class="p-4 text-center">Sisa Stok</th>
