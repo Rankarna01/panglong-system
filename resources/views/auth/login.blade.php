@@ -90,13 +90,6 @@
                     <p class="text-slate-500 text-sm font-medium">Silakan masuk dengan akun Anda untuk mengakses sistem.</p>
                 </div>
 
-                @if ($errors->any())
-                    <div class="bg-red-50 text-red-600 p-4 rounded-xl text-sm mb-6 flex items-start gap-3 border border-red-100 shadow-sm animate-pulse">
-                        <i class="fas fa-exclamation-circle mt-0.5 text-lg"></i>
-                        <span class="font-medium">{{ $errors->first() }}</span>
-                    </div>
-                @endif
-
                 <form action="{{ route('login.post') }}" method="POST" class="space-y-6">
                     @csrf
                     
@@ -107,9 +100,12 @@
                                 <i class="fas fa-envelope text-slate-400 group-focus-within:text-primary transition-colors"></i>
                             </div>
                             <input type="email" name="email" value="{{ old('email') }}" required autofocus
-                                class="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary focus:bg-white transition-all text-sm outline-none font-medium text-slate-700 placeholder:text-slate-400 placeholder:font-normal" 
+                                class="w-full pl-12 pr-4 py-3.5 bg-slate-50 border {{ $errors->has('email') ? 'border-red-500 ring-1 ring-red-500' : 'border-slate-200' }} rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary focus:bg-white transition-all text-sm outline-none font-medium text-slate-700 placeholder:text-slate-400 placeholder:font-normal" 
                                 placeholder="admin@flowinti.com">
                         </div>
+                        @error('email')
+                            <p class="text-xs text-red-500 mt-2 font-medium"><i class="fas fa-exclamation-circle mr-1"></i> {{ $message }}</p>
+                        @enderror
                     </div>
 
                     <div>
@@ -121,9 +117,12 @@
                                 <i class="fas fa-lock text-slate-400 group-focus-within:text-primary transition-colors"></i>
                             </div>
                             <input type="password" name="password" required 
-                                class="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary focus:bg-white transition-all text-sm outline-none font-medium text-slate-700 placeholder:text-slate-400 placeholder:font-normal" 
+                                class="w-full pl-12 pr-4 py-3.5 bg-slate-50 border {{ $errors->has('password') ? 'border-red-500 ring-1 ring-red-500' : 'border-slate-200' }} rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary focus:bg-white transition-all text-sm outline-none font-medium text-slate-700 placeholder:text-slate-400 placeholder:font-normal" 
                                 placeholder="••••••••">
                         </div>
+                        @error('password')
+                            <p class="text-xs text-red-500 mt-2 font-medium"><i class="fas fa-exclamation-circle mr-1"></i> {{ $message }}</p>
+                        @enderror
                     </div>
 
                     <button type="submit" class="w-full bg-primary text-white font-bold py-4 rounded-xl hover:bg-[#4a332c] hover:shadow-lg hover:shadow-primary/30 transition-all duration-300 flex items-center justify-center gap-2 mt-4 group">
