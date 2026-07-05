@@ -74,7 +74,7 @@
                 </div>
                 <div class="w-full md:w-2/3 relative">
                     <i class="fas fa-phone absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                    <input type="text" name="phone" value="{{ old('phone', $setting->phone ?? '') }}" class="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm text-slate-700 font-medium" placeholder="Contoh: 0812-3456-7890">
+                    <input type="number" name="phone" value="{{ old('phone', $setting->phone ?? '') }}" class="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm text-slate-700 font-medium" placeholder="Contoh: 0812-3456-7890">
                 </div>
             </div>
 
