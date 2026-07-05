@@ -129,10 +129,26 @@
         <form action="{{ route('kasir.pos.store') }}" method="POST" class="p-6 space-y-5" onsubmit="return validateCheckout()">
             @csrf
             <input type="hidden" name="cart_data" id="formCartData">
+            <input type="hidden" name="subtotal" id="formSubtotal">
             <input type="hidden" name="total_amount" id="formTotalAmount">
+            <input type="hidden" name="discount_name" id="formDiscountName">
+            <input type="hidden" name="discount_amount" id="formDiscountAmount">
 
-            <div class="text-center p-5 bg-primary/5 rounded-xl border border-primary/10">
+            <div class="mb-4">
+                <label class="block text-xs font-semibold text-slate-500 mb-2 uppercase tracking-wider">Pilih Diskon (Opsional)</label>
+                <select id="discountSelect" onchange="applyDiscount()" class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-sm font-bold text-slate-800 transition-all">
+                    <option value="" data-type="" data-value="0">Tanpa Diskon</option>
+                    @foreach($discounts as $discount)
+                        <option value="{{ $discount->name }}" data-type="{{ $discount->type }}" data-value="{{ $discount->value }}">
+                            {{ $discount->name }} ({{ $discount->type === 'percentage' ? $discount->value.'%' : 'Rp '.number_format($discount->value, 0, ',', '.') }})
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="text-center p-5 bg-primary/5 rounded-xl border border-primary/10 relative">
                 <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">Total Tagihan</p>
+                <p id="checkoutSubtotalLabel" class="text-sm font-bold text-slate-400 line-through hidden mb-1">Rp 0</p>
                 <h2 class="text-3xl font-bold text-primary" id="checkoutTotalLabel">Rp 0</h2>
             </div>
 
@@ -158,7 +174,8 @@
 
 <script>
     let cart = [];
-    let totalAmount = 0;
+    let totalAmount = 0; // Initial subtotal
+    let finalAmount = 0; // After discount
     const formatRp = (angka) => new Intl.NumberFormat('id-ID').format(angka);
 
     function openModal(id) {
@@ -279,6 +296,7 @@
     function renderCart() {
         let cartList = document.getElementById('cartList');
         totalAmount = 0;
+        finalAmount = 0;
 
         if (cart.length === 0) {
             cartList.innerHTML = `<div class="h-full flex flex-col items-center justify-center text-slate-400 opacity-70"><div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-3"><i class="fas fa-cart-arrow-down text-2xl text-slate-400"></i></div><p class="text-sm font-medium">Belum ada barang dipilih</p></div>`;
@@ -311,6 +329,7 @@
 
         cartList.innerHTML = html;
         document.getElementById('totalAmountLabel').innerText = 'Rp ' + formatRp(totalAmount);
+        finalAmount = totalAmount; // Update final amount
     }
 
     function clearCart() {
@@ -323,9 +342,11 @@
     function openCheckoutModal() {
         if(cart.length === 0) { Swal.fire('Kosong', 'Pilih barang dulu!', 'warning'); return; }
         
-        document.getElementById('checkoutTotalLabel').innerText = 'Rp ' + formatRp(totalAmount);
+        document.getElementById('discountSelect').value = '';
+        applyDiscount(); // Reset discount and update UI
+
         document.getElementById('formCartData').value = JSON.stringify(cart);
-        document.getElementById('formTotalAmount').value = totalAmount;
+        
         document.getElementById('cashInput').value = '';
         document.getElementById('changeLabel').innerText = 'Rp 0';
         document.getElementById('btnSubmitPayment').disabled = true;
@@ -334,9 +355,48 @@
         setTimeout(() => { document.getElementById('cashInput').focus(); }, 350);
     }
 
+    function applyDiscount() {
+        let select = document.getElementById('discountSelect');
+        let selectedOption = select.options[select.selectedIndex];
+        
+        let type = selectedOption.getAttribute('data-type');
+        let value = parseFloat(selectedOption.getAttribute('data-value')) || 0;
+        let discountName = selectedOption.value;
+
+        let discountAmount = 0;
+
+        if (type === 'percentage') {
+            discountAmount = totalAmount * (value / 100);
+        } else if (type === 'nominal') {
+            discountAmount = value;
+        }
+
+        finalAmount = totalAmount - discountAmount;
+        if (finalAmount < 0) finalAmount = 0;
+
+        let subtotalLabel = document.getElementById('checkoutSubtotalLabel');
+        let totalLabel = document.getElementById('checkoutTotalLabel');
+
+        if (discountAmount > 0) {
+            subtotalLabel.classList.remove('hidden');
+            subtotalLabel.innerText = 'Rp ' + formatRp(totalAmount);
+        } else {
+            subtotalLabel.classList.add('hidden');
+        }
+
+        totalLabel.innerText = 'Rp ' + formatRp(finalAmount);
+        
+        document.getElementById('formSubtotal').value = totalAmount;
+        document.getElementById('formTotalAmount').value = finalAmount;
+        document.getElementById('formDiscountName').value = discountName;
+        document.getElementById('formDiscountAmount').value = discountAmount;
+
+        calculateChange();
+    }
+
     function calculateChange() {
         let cash = parseInt(document.getElementById('cashInput').value) || 0;
-        let change = cash - totalAmount;
+        let change = cash - finalAmount;
         let btn = document.getElementById('btnSubmitPayment');
         let label = document.getElementById('changeLabel');
 
@@ -352,7 +412,7 @@
     }
 
     function validateCheckout() {
-        if (cart.length === 0 || (parseInt(document.getElementById('cashInput').value) || 0) < totalAmount) return false;
+        if (cart.length === 0 || (parseInt(document.getElementById('cashInput').value) || 0) < finalAmount) return false;
         return true;
     }
 </script>

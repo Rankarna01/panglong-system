@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\UnitController;
+use App\Http\Controllers\Admin\DiscountController as AdminDiscountController;
 use App\Http\Controllers\Admin\SupplierController as AdminSupplierController;
 use App\Http\Controllers\Admin\StockInController as AdminStockInController;
 use App\Http\Controllers\Admin\StockOutController as AdminStockOutController;
@@ -73,6 +74,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::delete('konversi/{id}', [ProductController::class, 'destroyConversion'])->name('barang.konversi.destroy');
     Route::resource('kategori', CategoryController::class);
     Route::resource('satuan', UnitController::class);
+    Route::resource('diskon', AdminDiscountController::class)->except(['create', 'show', 'edit']);
     Route::resource('supplier', AdminSupplierController::class);
     Route::resource('stok-masuk', AdminStockInController::class)->only(['index']);
     Route::get('stok-masuk/export', [AdminStockInController::class, 'export'])->name('stok-masuk.export');

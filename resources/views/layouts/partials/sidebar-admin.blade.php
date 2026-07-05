@@ -142,6 +142,12 @@
             <span class="font-medium">Sistem & Identitas</span>
         </a>
 
+        <a href="{{ route('admin.diskon.index') }}"
+            class="flex items-center gap-3 px-4 py-3 transition-all {{ request()->routeIs('admin.diskon.*') ? 'sidebar-active shadow-md bg-primary text-white rounded-xl' : 'text-slate-600 hover:bg-slate-50 rounded-xl' }}">
+            <i class="fas fa-tags w-5 {{ request()->routeIs('admin.diskon.*') ? 'text-white' : 'text-primary' }}"></i>
+            <span class="font-medium">Pengaturan Diskon</span>
+        </a>
+
         <a href="{{ route('admin.user.index') }}"
             class="flex items-center gap-3 px-4 py-3 transition-all {{ request()->routeIs('admin.user.*') ? 'sidebar-active shadow-md bg-primary text-white rounded-xl' : 'text-slate-600 hover:bg-slate-50 rounded-xl' }}">
             <i class="fas fa-users-cog w-5 {{ request()->routeIs('admin.user.*') ? 'text-white' : 'text-primary' }}"></i>

@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Models\Category;
 use App\Models\Sale;
 use App\Models\SaleDetail;
+use App\Models\Discount;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -21,8 +22,9 @@ class PosController extends Controller
                            ->where('stock', '>', 0)
                            ->get();
         $categories = Category::all();
+        $discounts = Discount::where('is_active', true)->get();
 
-        return view('kasir.pos.index', compact('products', 'categories'));
+        return view('kasir.pos.index', compact('products', 'categories', 'discounts'));
     }
 
   public function store(Request $request)
@@ -30,7 +32,10 @@ class PosController extends Controller
         $request->validate([
             'cart_data' => 'required|string',
             'total_amount' => 'required|numeric|min:1',
-            'cash_given' => 'required|numeric'
+            'cash_given' => 'required|numeric',
+            'discount_name' => 'nullable|string',
+            'discount_amount' => 'nullable|numeric',
+            'subtotal' => 'nullable|numeric'
         ]);
 
         $cart = json_decode($request->cart_data, true);
@@ -47,6 +52,9 @@ class PosController extends Controller
                     'invoice' => $invoice,
                     'user_id' => Auth::id(),
                     'total_amount' => $request->total_amount,
+                    'subtotal' => $request->subtotal ?? $request->total_amount,
+                    'discount_name' => $request->discount_name,
+                    'discount_amount' => $request->discount_amount ?? 0,
                 ]);
 
                 session(['cash_given' => $request->cash_given]);

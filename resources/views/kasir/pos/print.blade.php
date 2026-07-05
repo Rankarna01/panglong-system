@@ -43,24 +43,29 @@
             <td colspan="2" class="font-bold">{{ $item->product->name ?? 'Barang Terhapus' }}</td>
         </tr>
         <tr>
-            <td style="width: 50%;">{{ (float)$item->qty }} {{ $item->product->baseUnit->short_name ?? '' }} x {{ number_format($item->price, 0, ',', '.') }}</td>
-            <td class="text-right" style="width: 50%;">{{ number_format($item->subtotal, 0, ',', '.') }}</td>
-        </tr>
-        @endforeach
-    </table>
-    <div class="divider"></div>
-   <table>
-        @foreach($sale->details as $item)
-        <tr>
-            <td colspan="2" class="font-bold">{{ $item->product->name ?? 'Barang Terhapus' }}</td>
-        </tr>
-        <tr>
             <td style="width: 50%;">
                 {{ rtrim(rtrim(number_format($item->qty, 2, ',', '.'), '0'), ',') }} {{ $item->product->baseUnit->short_name ?? '' }} x {{ number_format($item->price, 0, ',', '.') }}
             </td>
             <td class="text-right" style="width: 50%;">{{ number_format($item->subtotal, 0, ',', '.') }}</td>
         </tr>
         @endforeach
+    </table>
+    <div class="divider"></div>
+    <table>
+        @if($sale->discount_amount > 0)
+        <tr>
+            <td style="width: 50%;">Subtotal</td>
+            <td class="text-right" style="width: 50%;">{{ number_format($sale->subtotal, 0, ',', '.') }}</td>
+        </tr>
+        <tr>
+            <td style="width: 50%;">Diskon ({{ $sale->discount_name }})</td>
+            <td class="text-right" style="width: 50%;">- {{ number_format($sale->discount_amount, 0, ',', '.') }}</td>
+        </tr>
+        @endif
+        <tr>
+            <td style="width: 50%;" class="font-bold">TOTAL BAYAR</td>
+            <td class="text-right font-bold" style="width: 50%;">{{ number_format($sale->total_amount, 0, ',', '.') }}</td>
+        </tr>
     </table>
     <div class="divider"></div>
     <div class="text-center" style="margin-top: 15px;">Terima Kasih Atas Kunjungan Anda</div>
