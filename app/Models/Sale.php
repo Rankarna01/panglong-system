@@ -6,7 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Sale extends Model
 {
-    protected $fillable = ['invoice', 'user_id', 'total_amount'];
+    protected $fillable = [
+        'invoice', 
+        'user_id', 
+        'total_amount',
+        'subtotal',
+        'discount_name',
+        'discount_amount'
+    ];
 
     public function user() { 
         return $this->belongsTo(User::class); 
