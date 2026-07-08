@@ -9,11 +9,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('stock_ins', function (Blueprint $table) {
-            $table->id();
-            $table->string('reference')->unique(); // Contoh: TRM-20260417-001
-            $table->foreignId('supplier_id')->constrained('suppliers')->onDelete('cascade');
-            $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
-            $table->foreignId('user_id')->constrained('users'); // Siapa admin yang input
+            $table->id('id_stock_in');
+            $table->string('reference')->unique();
+            $table->foreignId('id_supplier')->constrained('suppliers', 'id_supplier')->onDelete('cascade');
+            $table->foreignId('id_product')->constrained('products', 'id_product')->onDelete('cascade');
+            $table->foreignId('id_user')->constrained('users', 'id_user'); // Siapa admin yang input
             $table->decimal('qty', 10, 2);
             $table->date('date');
             $table->string('notes')->nullable();

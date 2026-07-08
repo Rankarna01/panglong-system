@@ -9,12 +9,13 @@ class Warehouse extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['code', 'name'];
+    protected $primaryKey = 'id_warehouse';
+    protected $fillable = ['name', 'location'];
 
     public function products()
     {
-        return $this->belongsToMany(Product::class, 'product_warehouse')
-                    ->withPivot('stock')
+        return $this->belongsToMany(Product::class, 'product_warehouse', 'id_warehouse', 'id_product')
+                    ->withPivot('stock', 'id_product_warehouse')
                     ->withTimestamps();
     }
 }

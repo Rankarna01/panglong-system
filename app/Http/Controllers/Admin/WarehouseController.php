@@ -29,7 +29,7 @@ class WarehouseController extends Controller
     {
         $warehouse = Warehouse::findOrFail($id);
         $request->validate([
-            'code' => 'required|unique:warehouses,code,' . $id,
+            'code' => 'required|unique:warehouses,code,' . $id . ',id_warehouse',
             'name' => 'required',
         ]);
 

@@ -50,7 +50,7 @@ class PosController extends Controller
 
                 $newSale = Sale::create([
                     'invoice' => $invoice,
-                    'user_id' => Auth::id(),
+                    'id_user' => Auth::id(),
                     'total_amount' => $request->total_amount,
                     'subtotal' => $request->subtotal ?? $request->total_amount,
                     'discount_name' => $request->discount_name,
@@ -69,11 +69,11 @@ class PosController extends Controller
 
                     // 1. Buat Data Detail Penjualan
                     SaleDetail::create([
-                        'sale_id' => $newSale->id,
-                        'product_id' => $product->id,
-                        'qty' => $realQtyToDeduct, 
-                        'price' => $product->price, 
-                        'subtotal' => $item['subtotal'], 
+                        'id_sale' => $newSale->id_sale,
+                        'id_product' => $product->id_product,
+                        'qty' => $realQtyToDeduct,
+                        'price' => $product->price,
+                        'subtotal' => $item['subtotal']
                     ]);
 
                     // 2. Kurangi Stok Global (Tabel Products)
@@ -83,13 +83,13 @@ class PosController extends Controller
                     // 3. LOGIKA WMS: AUTO-DEDUCT DARI GUDANG (METODE FIFO)
                     // ========================================================
                     $qtyLeftToDeductFromWarehouse = $realQtyToDeduct;
-                    $productWarehouses = DB::table('product_warehouse')
-                        ->where('product_id', $product->id)
+                    $allocations = DB::table('product_warehouse')
+                        ->where('id_product', $product->id_product)
                         ->where('stock', '>', 0)
-                        ->orderBy('created_at', 'asc')
+                        ->orderBy('id', 'asc') // FIFO by allocation ID
                         ->get();
 
-                    foreach ($productWarehouses as $pw) {
+                    foreach ($allocations as $pw) {
                         if ($qtyLeftToDeductFromWarehouse <= 0) break; 
 
                         if ($pw->stock >= $qtyLeftToDeductFromWarehouse) {
@@ -110,10 +110,11 @@ class PosController extends Controller
 
                 return $newSale;
             });
+            DB::commit();
 
-            return redirect()->back()->with('success', 'Transaksi Berhasil!')->with('print_invoice', $sale->id);
-
+            return redirect()->back()->with('success', 'Transaksi Berhasil!')->with('print_invoice', $sale->id_sale);
         } catch (\Exception $e) {
+            DB::rollBack();
             return redirect()->back()->withErrors('Transaksi Gagal: ' . $e->getMessage());
         }
     }

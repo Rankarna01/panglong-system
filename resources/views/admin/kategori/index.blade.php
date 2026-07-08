@@ -31,7 +31,7 @@
                             <button onclick="editModal({{ $item }})" class="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-all">
                                 <i class="fas fa-edit text-xs"></i>
                             </button>
-                            <form action="{{ route('admin.kategori.destroy', $item->id) }}" method="POST" class="inline" onsubmit="return confirm('Hapus kategori ini?')">
+                            <form action="{{ route('admin.kategori.destroy', $item->category_id) }}" method="POST" class="inline" onsubmit="return confirm('Hapus kategori ini?')">
                                 @csrf @method('DELETE')
                                 <button type="submit" class="w-8 h-8 rounded-lg bg-red-50 text-red-500 flex items-center justify-center hover:bg-red-500 hover:text-white transition-all">
                                     <i class="fas fa-trash text-xs"></i>
@@ -100,7 +100,7 @@
         setTimeout(() => { m.classList.add('hidden'); m.classList.remove('flex'); }, 300);
     }
     function editModal(item) {
-        document.getElementById('editForm').action = `/admin/kategori/${item.id}`;
+        document.getElementById('editForm').action = `/admin/kategori/${item.category_id}`;
         document.getElementById('edit_name').value = item.name;
         openModal('modalEdit');
     }

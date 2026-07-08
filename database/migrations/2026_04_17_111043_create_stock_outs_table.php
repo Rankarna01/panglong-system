@@ -9,10 +9,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('stock_outs', function (Blueprint $table) {
-            $table->id();
+            $table->id('id_stock_out');
             $table->string('reference')->unique(); // Contoh: TRK-20260418-001
-            $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
-            $table->foreignId('user_id')->constrained('users'); // Staff yang mengeluarkan barang
+            $table->foreignId('id_product')->constrained('products', 'id_product')->onDelete('cascade');
+            $table->foreignId('id_user')->constrained('users', 'id_user'); // Staff yang mengeluarkan barang
              $table->decimal('qty', 10, 2);
             $table->date('date');
             $table->string('reason'); // Alasan: Rusak, Retur, Dipakai Sendiri, dll

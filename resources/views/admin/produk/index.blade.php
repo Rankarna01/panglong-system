@@ -71,14 +71,14 @@
                         </td>
                         <td class="p-4 text-center">
                             <div class="flex items-center justify-center gap-1.5">
-                                <button onclick='openConvModal(@json($item))' class="px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-600 text-xs font-bold hover:bg-emerald-500 hover:text-white transition-all flex items-center gap-1.5" title="Atur Konversi Satuan">
+                                <button onclick="conversionModal({{ $item->id_product }}, '{{ $item->name }}', '{{ $item->baseUnit->name ?? '' }}')" class="px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-600 text-xs font-bold hover:bg-emerald-500 hover:text-white transition-all flex items-center gap-1.5" title="Atur Konversi Satuan">
                                     <i class="fas fa-exchange-alt"></i> Konversi
                                 </button>
                                 
                                 <button onclick="editModal({{ $item }})" class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center hover:bg-primary hover:text-white transition-all" title="Edit Master">
                                     <i class="fas fa-edit text-xs"></i>
                                 </button>
-                                <form action="{{ route('admin.barang.destroy', $item->id) }}" method="POST" class="inline" onsubmit="return confirm('Hapus barang ini beserta seluruh aturan konversinya?')">
+                                <form action="{{ route('admin.produk.destroy', $item->id_product) }}" method="POST" class="inline" onsubmit="return confirm('Hapus barang ini?')">
                                     @csrf @method('DELETE')
                                     <button type="submit" class="w-8 h-8 rounded-lg bg-red-50 text-red-500 flex items-center justify-center hover:bg-red-500 hover:text-white transition-all" title="Hapus">
                                         <i class="fas fa-trash text-xs"></i>
@@ -135,10 +135,10 @@
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-primary mb-1.5 uppercase tracking-wider">Satuan Dasar (Terkecil)</label>
-                    <select name="unit_id" required class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm text-slate-700 bg-primary/5">
+                    <select name="id_unit" required class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm text-slate-700 bg-primary/5">
                         <option value="">Pilih (Eceran)...</option>
                         @foreach($units as $unit)
-                            <option value="{{ $unit->id }}">{{ $unit->name }}</option>
+                            <option value="{{ $unit->id_unit }}">{{ $unit->name }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -200,8 +200,9 @@
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-primary mb-1.5 uppercase tracking-wider">Satuan Dasar</label>
-                    <select name="unit_id" id="edit_unit" required class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm text-slate-700 bg-primary/5">
-                        @foreach($units as $unit) <option value="{{ $unit->id }}">{{ $unit->name }}</option> @endforeach
+                    <select name="id_unit" id="edit_unit" required class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm text-slate-700 bg-primary/5">
+                        <option value="">Pilih Satuan</option>
+                        @foreach($units as $unit) <option value="{{ $unit->id_unit }}">{{ $unit->name }}</option> @endforeach
                     </select>
                 </div>
             </div>
@@ -247,9 +248,9 @@
                 <div class="flex items-end gap-3">
                     <div class="flex-1">
                         <label class="block text-[10px] font-semibold text-emerald-700 mb-1">Satuan Grosir (Besar)</label>
-                        <select name="unit_id" required class="w-full px-3 py-2 bg-white border border-emerald-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none text-sm text-slate-700">
-                            <option value="">Pilih...</option>
-                            @foreach($units as $unit) <option value="{{ $unit->id }}">{{ $unit->name }}</option> @endforeach
+                        <select name="id_unit" required class="w-full px-3 py-2 bg-white border border-emerald-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none text-sm text-slate-700">
+                            <option value="">Pilih Satuan Besar</option>
+                            @foreach($units as $unit) <option value="{{ $unit->id_unit }}">{{ $unit->name }}</option> @endforeach
                         </select>
                     </div>
                     <div class="pb-2 font-bold text-slate-400">=</div>
@@ -297,10 +298,10 @@
     }
 
     function editModal(item) {
-        document.getElementById('editForm').action = `/admin/barang/${item.id}`;
+        document.getElementById('editForm').action = `/admin/produk/${item.id_product}`;
         document.getElementById('edit_name').value = item.name;
         document.getElementById('edit_category').value = item.category_id;
-        document.getElementById('edit_unit').value = item.unit_id;
+        document.getElementById('edit_unit').value = item.id_unit;
         document.getElementById('edit_stock').value = item.stock;
         document.getElementById('edit_min_stock').value = item.min_stock;
         document.getElementById('edit_price').value = Math.floor(item.price);
@@ -308,12 +309,12 @@
     }
 
     // KONVERSI MODAL LOGIC
-    function openConvModal(product) {
-        document.getElementById('convForm').action = `/admin/barang/${product.id}/konversi`;
-        document.getElementById('convProductName').innerText = product.code + ' - ' + product.name;
+    function conversionModal(productId, productName, baseUnitName) {
+        document.getElementById('convForm').action = `/admin/produk/${productId}/conversion`;
+        document.getElementById('convProductName').innerText = productName;
         
-        let baseUnitName = product.unit ? product.unit.name : 'Satuan Dasar';
-        document.getElementById('convBaseLabel').innerText = `Dikali (dalam ${baseUnitName})`;
+        let label = baseUnitName ? `Dikali (dalam ${baseUnitName})` : 'Nilai Pengali';
+        document.getElementById('convBaseLabel').innerText = label;
 
         let tbody = document.getElementById('convList');
         let html = '';

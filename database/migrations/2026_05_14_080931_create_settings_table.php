@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('settings', function (Blueprint $table) {
-            $table->id();
+            $table->id('id_setting');
             $table->string('app_name')->default('PANGLONG-JAYA');
             $table->text('address')->nullable();
             $table->string('phone')->nullable();

@@ -57,10 +57,10 @@
                             <span class="px-3 py-1.5 bg-emerald-50 text-emerald-600 font-bold text-lg rounded-xl">+ {{ $item->qty }} <span class="text-xs font-normal">{{ $item->product->baseUnit->short_name ?? '' }}</span></span>
                         </td>
                         <td class="p-4 text-center">
-                            <button onclick="openEditModal({{ $item->id }}, '{{ $item->date }}', '{{ $item->supplier_id }}', '{{ $item->product_id }}', '{{ $item->qty }}', '{{ $item->payment_method }}', '{{ explode(' | Input:', $item->notes)[0] }}')" class="w-8 h-8 rounded-lg bg-blue-50 text-blue-500 flex items-center justify-center hover:bg-blue-500 hover:text-white transition-all mr-1" title="Edit">
+                            <button onclick="openEditModal({{ $item->id_stock_in }}, '{{ $item->date }}', '{{ $item->id_supplier }}', '{{ $item->id_product }}', '{{ $item->qty }}', '{{ $item->payment_method }}', '{{ explode(' | Input:', $item->notes)[0] }}')" class="w-8 h-8 rounded-lg bg-blue-50 text-blue-500 flex items-center justify-center hover:bg-blue-500 hover:text-white transition-all mr-1" title="Edit">
                                 <i class="fas fa-edit text-xs"></i>
                             </button>
-                            <form action="{{ route('gudang.stok-masuk.destroy', $item->id) }}" method="POST" class="inline" onsubmit="return confirm('Batal input? Stok barang akan dikurangi kembali.')">
+                            <form action="{{ route('gudang.stok-masuk.destroy', $item->id_stock_in) }}" method="POST" class="inline" onsubmit="return confirm('Batal input? Stok barang akan dikurangi kembali.')">
                                 @csrf @method('DELETE')
                                 <button type="submit" class="w-8 h-8 rounded-lg bg-red-50 text-red-500 flex items-center justify-center hover:bg-red-500 hover:text-white transition-all" title="Batal & Kurangi Stok">
                                     <i class="fas fa-undo-alt text-xs"></i>
@@ -96,24 +96,25 @@
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-slate-500 mb-1.5 uppercase">Supplier</label>
-                        <select name="supplier_id" required class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:border-primary outline-none text-sm">
-                            <option value="">Pilih Supplier...</option>
-                            @foreach($suppliers as $sup) <option value="{{ $sup->id }}">{{ $sup->name }}</option> @endforeach
+                        <select name="id_supplier" required class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:border-primary outline-none text-sm">
+                            <option value="">Cari/Pilih Supplier...</option>
+                            @foreach($suppliers as $sup)
+                                <option value="{{ $sup->id_supplier }}">{{ $sup->name }}</option> @endforeach
                         </select>
                     </div>
                 </div>
 
                 <div>
                     <label class="block text-xs font-bold text-primary mb-1.5 uppercase">Pilih Barang</label>
-                    <select name="product_id" id="productSelect" onchange="updateUnitOptions()" required class="w-full px-4 py-2.5 bg-primary/5 border border-primary/20 rounded-xl focus:ring-2 focus:border-primary outline-none text-sm font-bold text-slate-700">
+                    <select name="id_product" id="productSelect" onchange="updateUnitOptions()" required class="w-full px-4 py-2.5 bg-primary/5 border border-primary/20 rounded-xl focus:ring-2 focus:border-primary outline-none text-sm font-bold text-slate-700">
                         <option value="">Cari/Pilih Barang...</option>
                         @foreach($products as $prod)
                             @php
                                 $validUnits = [
-                                    ['id' => $prod->unit_id, 'name' => ($prod->baseUnit->name ?? 'Base') . ' (Satuan Dasar)']
+                                    ['id_unit' => $prod->id_unit, 'name' => ($prod->baseUnit->name ?? 'Base') . ' (Satuan Dasar)']
                                 ];
                                 foreach($prod->conversions as $conv) {
-                                    $validUnits[] = ['id' => $conv->unit_id, 'name' => ($conv->unit->name ?? 'Grosir') . ' (Isi '.$conv->multiplier.')'];
+                                    $validUnits[] = ['id_unit' => $conv->id_unit, 'name' => ($conv->unit->name ?? 'Grosir') . ' (Isi '.$conv->multiplier.')'];
                                 }
                             @endphp
                             <option value="{{ $prod->id }}" data-units="{{ json_encode($validUnits) }}">{{ $prod->code }} - {{ $prod->name }}</option>
@@ -128,7 +129,7 @@
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-emerald-600 mb-1.5 uppercase">Satuan Diterima</label>
-                        <select name="unit_id" id="unitSelect" required disabled class="w-full px-4 py-2.5 bg-white border border-emerald-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm text-slate-700 disabled:opacity-50 disabled:bg-slate-100">
+                        <select name="id_unit" id="unitSelect" required disabled class="w-full px-4 py-2.5 bg-white border border-emerald-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm text-slate-700 disabled:opacity-50 disabled:bg-slate-100">
                             <option value="">Pilih Barang Dulu...</option>
                         </select>
                     </div>
@@ -176,24 +177,25 @@
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-slate-500 mb-1.5 uppercase">Supplier</label>
-                        <select name="supplier_id" id="edit_supplier_id" required class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:border-primary outline-none text-sm">
-                            <option value="">Pilih Supplier...</option>
-                            @foreach($suppliers as $sup) <option value="{{ $sup->id }}">{{ $sup->name }}</option> @endforeach
+                        <select name="id_supplier" id="edit_id_supplier" required class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:border-primary outline-none text-sm">
+                            <option value="">Cari/Pilih Supplier...</option>
+                            @foreach($suppliers as $sup)
+                                <option value="{{ $sup->id_supplier }}">{{ $sup->name }}</option> @endforeach
                         </select>
                     </div>
                 </div>
 
                 <div>
                     <label class="block text-xs font-bold text-primary mb-1.5 uppercase">Pilih Barang</label>
-                    <select name="product_id" id="editProductSelect" onchange="updateEditUnitOptions()" required class="w-full px-4 py-2.5 bg-primary/5 border border-primary/20 rounded-xl focus:ring-2 focus:border-primary outline-none text-sm font-bold text-slate-700">
+                    <select name="id_product" id="editProductSelect" onchange="updateEditUnitOptions()" required class="w-full px-4 py-2.5 bg-primary/5 border border-primary/20 rounded-xl focus:ring-2 focus:border-primary outline-none text-sm font-bold text-slate-700">
                         <option value="">Cari/Pilih Barang...</option>
                         @foreach($products as $prod)
                             @php
                                 $validUnits = [
-                                    ['id' => $prod->unit_id, 'name' => ($prod->baseUnit->name ?? 'Base') . ' (Satuan Dasar)']
+                                    ['id_unit' => $prod->id_unit, 'name' => ($prod->baseUnit->name ?? 'Base') . ' (Satuan Dasar)']
                                 ];
                                 foreach($prod->conversions as $conv) {
-                                    $validUnits[] = ['id' => $conv->unit_id, 'name' => ($conv->unit->name ?? 'Grosir') . ' (Isi '.$conv->multiplier.')'];
+                                    $validUnits[] = ['id_unit' => $conv->id_unit, 'name' => ($conv->unit->name ?? 'Grosir') . ' (Isi '.$conv->multiplier.')'];
                                 }
                             @endphp
                             <option value="{{ $prod->id }}" data-units="{{ json_encode($validUnits) }}">{{ $prod->code }} - {{ $prod->name }}</option>
@@ -209,7 +211,7 @@
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-emerald-600 mb-1.5 uppercase">Satuan Diterima</label>
-                        <select name="unit_id" id="editUnitSelect" required class="w-full px-4 py-2.5 bg-white border border-emerald-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm text-slate-700 disabled:opacity-50 disabled:bg-slate-100">
+                        <select name="id_unit" id="editUnitSelect" required class="w-full px-4 py-2.5 bg-white border border-emerald-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm text-slate-700 disabled:opacity-50 disabled:bg-slate-100">
                             <option value="">Pilih Barang Dulu...</option>
                         </select>
                     </div>
@@ -298,15 +300,15 @@
         unitSelect.disabled = false;
     }
 
-    function openEditModal(id, date, supplier_id, product_id, qty, payment_method, notes) {
+    function openEditModal(id, date, id_supplier, id_product, qty, payment_method, notes) {
         document.getElementById('editForm').action = `/gudang/stok-masuk/${id}`;
         
         // Format date from YYYY-MM-DD HH:mm:ss to YYYY-MM-DD
         let formattedDate = date.split(' ')[0];
         document.getElementById('edit_date').value = formattedDate;
         
-        document.getElementById('edit_supplier_id').value = supplier_id;
-        document.getElementById('editProductSelect').value = product_id;
+        document.getElementById('edit_id_supplier').value = id_supplier;
+        document.getElementById('editProductSelect').value = id_product;
         document.getElementById('edit_payment_method').value = payment_method;
         
         // Clean notes if " | Input:" is there

@@ -25,10 +25,9 @@ class StockInController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'supplier_id' => 'required',
-            'product_id' => 'required',
-            'unit_id' => 'required', 
+            'id_supplier' => 'required',
+            'id_product' => 'required',
+            'id_unit' => 'required', 
             'input_qty' => 'required|numeric|min:0.1', 
             'date' => 'required|date',
             'payment_method' => 'required|in:cash,transfer',
@@ -36,13 +35,13 @@ class StockInController extends Controller
 
         try {
             DB::transaction(function () use ($request) {
-                $product = Product::with('baseUnit')->findOrFail($request->product_id);
+                $product = Product::with('baseUnit')->findOrFail($request->id_product);
                 
                 $multiplier = 1;
                 $unitName = $product->baseUnit->name ?? 'Satuan';
-                if ($request->unit_id != $product->unit_id) {
+                if ($request->id_unit != $product->id_unit) {
                     $conversion = UnitConversion::with('unit')
-                        ->where('product_id', $product->id)
+                        ->where('id_product', $product->id_product)
                         ->where('unit_id', $request->unit_id)
                         ->first();
 
@@ -60,9 +59,9 @@ class StockInController extends Controller
 
                 StockIn::create([
                     'reference' => $reference,
-                    'supplier_id' => $request->supplier_id,
-                    'product_id' => $request->product_id,
-                    'user_id' => Auth::id(),
+                    'id_supplier' => $request->id_supplier,
+                    'id_product' => $request->id_product,
+                    'id_user' => Auth::id(),
                     'qty' => $realQty, 
                     'date' => $request->date,
                     'payment_method' => $request->payment_method,
@@ -80,9 +79,9 @@ class StockInController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'supplier_id' => 'required',
-            'product_id' => 'required',
-            'unit_id' => 'required',
+            'id_supplier' => 'required',
+            'id_product' => 'required',
+            'id_unit' => 'required',
             'input_qty' => 'required|numeric|min:0.1',
             'date' => 'required|date',
             'payment_method' => 'required|in:cash,transfer',
@@ -91,19 +90,19 @@ class StockInController extends Controller
         try {
             DB::transaction(function () use ($request, $id) {
                 $stockIn = StockIn::findOrFail($id);
-                $oldProduct = Product::findOrFail($stockIn->product_id);
+                $oldProduct = Product::findOrFail($stockIn->id_product);
                 
                 // Revert stok lama
                 $oldProduct->decrement('stock', $stockIn->qty);
 
                 // Proses stok baru
-                $newProduct = Product::with('baseUnit')->findOrFail($request->product_id);
+                $newProduct = Product::with('baseUnit')->findOrFail($request->id_product);
                 
                 $multiplier = 1;
                 $unitName = $newProduct->baseUnit->name ?? 'Satuan';
-                if ($request->unit_id != $newProduct->unit_id) {
+                if ($request->id_unit != $newProduct->id_unit) {
                     $conversion = UnitConversion::with('unit')
-                        ->where('product_id', $newProduct->id)
+                        ->where('id_product', $newProduct->id_product)
                         ->where('unit_id', $request->unit_id)
                         ->first();
 
@@ -119,8 +118,8 @@ class StockInController extends Controller
                 $finalNotes = $request->notes ? $request->notes . " | " . $historyNote : $historyNote;
 
                 $stockIn->update([
-                    'supplier_id' => $request->supplier_id,
-                    'product_id' => $request->product_id,
+                    'id_supplier' => $request->id_supplier,
+                    'id_product' => $request->id_product,
                     'qty' => $realQty,
                     'date' => $request->date,
                     'payment_method' => $request->payment_method,
@@ -142,7 +141,7 @@ class StockInController extends Controller
         try {
             DB::transaction(function () use ($id) {
                 $stockIn = StockIn::findOrFail($id);
-                $product = Product::findOrFail($stockIn->product_id);
+                $product = Product::findOrFail($stockIn->id_product);
                 $product->decrement('stock', $stockIn->qty);
                 $stockIn->delete();
             });

@@ -17,45 +17,40 @@ class WarehouseMonitorController extends Controller
         }])->get();
 
         $products = Product::with('baseUnit')->where('stock', '>', 0)->get();
-        $unallocatedProducts = collect();
 
         foreach ($products as $prod) {
-            $allocatedStock = DB::table('product_warehouse')->where('product_id', $prod->id)->sum('stock');
-            $unallocatedStock = $prod->stock - $allocatedStock;
-
-            if ($unallocatedStock > 0) {
-                $prod->unallocated_qty = $unallocatedStock;
-                $unallocatedProducts->push($prod);
-            }
+            $allocatedStock = DB::table('product_warehouse')->where('id_product', $prod->id_product)->sum('stock');
+            $prod->unallocated_stock = $prod->stock - $allocatedStock;
         }
 
-        return view('admin.gudang.monitoring', compact('warehouses', 'unallocatedProducts'));
+        return view('admin.gudang.monitoring', compact('warehouses', 'products'));
     }
 
     public function allocate(Request $request, $id)
     {
+        $warehouse = Warehouse::findOrFail($id);
+        
         $request->validate([
-            'product_id' => 'required|exists:products,id',
-            'qty' => 'required|numeric|min:0.1'
+            'id_product' => 'required|exists:products,id_product',
+            'stock' => 'required|numeric|min:0.1'
         ]);
 
-        $warehouse = Warehouse::findOrFail($id);
-        $product = Product::findOrFail($request->product_id);
-        $allocatedStock = DB::table('product_warehouse')->where('product_id', $product->id)->sum('stock');
+        $product = Product::findOrFail($request->id_product);
+        $allocatedStock = DB::table('product_warehouse')->where('id_product', $product->id_product)->sum('stock');
         $unallocatedStock = $product->stock - $allocatedStock;
 
-        if ($request->qty > $unallocatedStock) {
-            return redirect()->back()->withErrors('Jumlah melebihi stok yang ada di Area Transit! Sisa maksimal: ' . $unallocatedStock);
+        if ($request->stock > $unallocatedStock) {
+            return redirect()->back()->with('error', 'Stok tidak cukup untuk dialokasikan! Maksimal: ' . $unallocatedStock);
         }
 
-        $existing = $warehouse->products()->where('product_id', $product->id)->first();
+        $existing = $warehouse->products()->where('product_warehouse.id_product', $product->id_product)->first();
 
         if ($existing) {
-            $warehouse->products()->updateExistingPivot($product->id, [
-                'stock' => $existing->pivot->stock + $request->qty
+            $warehouse->products()->updateExistingPivot($product->id_product, [
+                'stock' => $existing->pivot->stock + $request->stock
             ]);
         } else {
-            $warehouse->products()->attach($product->id, ['stock' => $request->qty]);
+            $warehouse->products()->attach($product->id_product, ['stock' => $request->qty]);
         }
 
         return redirect()->back()->with('success', 'Berhasil! ' . $request->qty . ' ' . ($product->baseUnit->short_name ?? '') . ' ' . $product->name . ' telah disusun ke dalam ' . $warehouse->name);

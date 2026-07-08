@@ -108,12 +108,10 @@
                     @csrf
                     <div>
                         <label class="block text-xs font-semibold text-slate-500 mb-1.5">Pilih Barang dari Area Transit</label>
-                        <select name="product_id" required class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none text-sm text-slate-700 font-medium">
+                        <select name="id_product" required class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none text-sm text-slate-700 font-medium">
                             <option value="">-- Pilih Barang --</option>
-                            @foreach($unallocatedProducts as $item)
-                                <option value="{{ $item->id }}">
-                                    {{ $item->name }} (Sisa: {{ fmod($item->unallocated_qty, 1) !== 0.00 ? rtrim(rtrim($item->unallocated_qty, '0'), '.') : number_format($item->unallocated_qty, 0) }})
-                                </option>
+                            @foreach($unallocatedProducts as $p)
+                                <option value="{{ $p->id_product }}">{{ $p->code }} - {{ $p->name }} (Belum dialokasikan: {{ $p->unallocated_stock }})</option>
                             @endforeach
                         </select>
                     </div>
@@ -156,7 +154,7 @@
         document.getElementById('modalWarehouseName').innerText = warehouse.name;
         document.getElementById('modalWarehouseCode').innerText = warehouse.code;
         
-        document.getElementById('allocateForm').action = `/admin/monitoring-gudang/${warehouse.id}/allocate`;
+        document.getElementById('allocateForm').action = `/admin/monitoring-gudang/${warehouse.id_warehouse}/allocate`;
 
         let contentsContainer = document.getElementById('warehouseContents');
         let html = '';

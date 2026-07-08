@@ -48,7 +48,7 @@
                                 <button onclick="editModal({{ $item }})" class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center hover:bg-primary hover:text-white transition-all">
                                     <i class="fas fa-edit text-xs"></i>
                                 </button>
-                                <form action="{{ route('admin.gudang.destroy', $item->id) }}" method="POST" class="inline" onsubmit="return confirm('Yakin ingin menghapus gudang ini?')">
+                                <form action="{{ route('admin.gudang.destroy', $item->id_warehouse) }}" method="POST" class="inline" onsubmit="return confirm('Yakin ingin menghapus gudang ini?')">
                                     @csrf @method('DELETE')
                                     <button type="submit" class="w-8 h-8 rounded-lg bg-red-50 text-red-500 flex items-center justify-center hover:bg-red-500 hover:text-white transition-all">
                                         <i class="fas fa-trash text-xs"></i>
@@ -134,7 +134,7 @@
     }
 
     function editModal(item) {
-        document.getElementById('editForm').action = `/admin/gudang/${item.id}`;
+        document.getElementById('editForm').action = `/admin/gudang/${item.id_warehouse}`;
         document.getElementById('edit_code').value = item.code;
         document.getElementById('edit_name').value = item.name;
         openModal('modalEdit');

@@ -12,10 +12,10 @@ return new class extends Migration
   public function up(): void
 {
     Schema::create('sales', function (Blueprint $table) {
-        $table->id();
+        $table->id('id_sale');
         $table->string('invoice')->unique();
         $table->decimal('total_amount', 15, 2);
-        $table->foreignId('user_id')->constrained(); // Siapa kasirnya
+        $table->foreignId('id_user')->constrained('users', 'id_user'); // Siapa kasirnya
         $table->timestamps();
     });
 }

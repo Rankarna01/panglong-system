@@ -25,8 +25,8 @@ class ProductController extends Controller
     {
         $request->validate([
             'name' => 'required',
-            'category_id' => 'required',
-            'unit_id' => 'required',
+            'id_category' => 'required',
+            'id_unit' => 'required',
             'stock' => 'required|numeric',
             'price' => 'required|numeric',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048', 
@@ -40,8 +40,8 @@ class ProductController extends Controller
         Product::create([
             'code' => 'BRG-' . strtoupper(Str::random(5)),
             'name' => $request->name,
-            'category_id' => $request->category_id,
-            'unit_id' => $request->unit_id,
+            'id_category' => $request->id_category,
+            'id_unit' => $request->id_unit,
             'image' => $imagePath, 
             'stock' => $request->stock,
             'min_stock' => $request->min_stock ?? 5,
@@ -57,8 +57,8 @@ class ProductController extends Controller
 
         $request->validate([
             'name' => 'required',
-            'category_id' => 'required',
-            'unit_id' => 'required',
+            'id_category' => 'required',
+            'id_unit' => 'required',
             'stock' => 'required|numeric',
             'price' => 'required|numeric',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
@@ -75,8 +75,8 @@ class ProductController extends Controller
 
         $product->update([
             'name' => $request->name,
-            'category_id' => $request->category_id,
-            'unit_id' => $request->unit_id,
+            'id_category' => $request->id_category,
+            'id_unit' => $request->id_unit,
             'image' => $imagePath, 
             'stock' => $request->stock,
             'min_stock' => $request->min_stock ?? 5,
@@ -103,13 +103,13 @@ class ProductController extends Controller
     public function storeConversion(Request $request, $productId)
     {
         $request->validate([
-            'unit_id' => 'required',
+            'id_unit' => 'required',
             'multiplier' => 'required|numeric|min:0.1'
         ]);
 
         UnitConversion::create([
-            'product_id' => $productId,
-            'unit_id' => $request->unit_id,
+            'id_product' => $productId,
+            'id_unit' => $request->id_unit,
             'multiplier' => $request->multiplier
         ]);
 

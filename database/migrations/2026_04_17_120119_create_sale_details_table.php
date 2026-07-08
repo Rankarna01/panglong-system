@@ -9,9 +9,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('sale_details', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('sale_id')->constrained('sales')->onDelete('cascade');
-            $table->foreignId('product_id')->constrained('products'); // Barang yang dibeli
+            $table->id('id_sale_detail');
+            $table->foreignId('id_sale')->constrained('sales', 'id_sale')->onDelete('cascade');
+            $table->foreignId('id_product')->constrained('products', 'id_product'); // Barang yang dibeli
             $table->decimal('qty', 10, 2);
             $table->decimal('price', 15, 2); // Harga saat dibeli (jaga-jaga jika harga master berubah)
             $table->decimal('subtotal', 15, 2); // qty * price

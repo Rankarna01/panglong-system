@@ -33,7 +33,7 @@
                             <button onclick="editModal({{ $item }})" class="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-all">
                                 <i class="fas fa-edit text-xs"></i>
                             </button>
-                            <form action="{{ route('admin.satuan.destroy', $item->id) }}" method="POST" class="inline" onsubmit="return confirm('Hapus satuan ini?')">
+                            <form action="{{ route('admin.satuan.destroy', $item->id_unit) }}" method="POST" class="inline" onsubmit="return confirm('Hapus satuan ini?')">
                                 @csrf @method('DELETE')
                                 <button type="submit" class="w-8 h-8 rounded-lg bg-red-50 text-red-500 flex items-center justify-center hover:bg-red-500 hover:text-white transition-all">
                                     <i class="fas fa-trash text-xs"></i>
@@ -110,7 +110,7 @@
         setTimeout(() => { m.classList.add('hidden'); m.classList.remove('flex'); }, 300);
     }
     function editModal(item) {
-        document.getElementById('editForm').action = `/admin/satuan/${item.id}`;
+        document.getElementById('editForm').action = `/admin/satuan/${item.id_unit}`;
         document.getElementById('edit_name').value = item.name;
         document.getElementById('edit_short').value = item.short_name;
         openModal('modalEdit');

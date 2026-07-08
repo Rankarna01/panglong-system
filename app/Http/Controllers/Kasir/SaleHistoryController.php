@@ -16,20 +16,20 @@ class SaleHistoryController extends Controller
         $today = Carbon::today();
 
         $sales = Sale::with('details.product')
-                     ->where('user_id', $userId)
+                     ->where('id_user', $userId)
                      ->latest()
                      ->get();
 
       
-        $sales_today = Sale::where('user_id', $userId)->whereDate('created_at', $today)->count();
-        $revenue_today = Sale::where('user_id', $userId)->whereDate('created_at', $today)->sum('total_amount');
+        $sales_today = Sale::where('id_user', $userId)->whereDate('created_at', $today)->count();
+        $revenue_today = Sale::where('id_user', $userId)->whereDate('created_at', $today)->sum('total_amount');
         $chart_dates = collect();
         $chart_totals = collect();
 
         for ($i = 6; $i >= 0; $i--) {
             $date = Carbon::now()->subDays($i)->format('Y-m-d');
             $chart_dates->push(Carbon::parse($date)->format('d M'));
-            $total = Sale::where('user_id', $userId)
+            $total = Sale::where('id_user', $userId)
                          ->whereDate('created_at', $date)
                          ->sum('total_amount');
             

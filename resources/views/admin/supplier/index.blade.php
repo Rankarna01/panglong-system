@@ -55,7 +55,7 @@
                     <button onclick="editModal({{ $item }})" class="w-9 h-9 rounded-xl bg-slate-50 text-slate-500 hover:text-primary hover:bg-primary/10 flex items-center justify-center transition-all" title="Edit">
                         <i class="fas fa-edit text-sm"></i>
                     </button>
-                    <form action="{{ route('admin.supplier.destroy', $item->id) }}" method="POST" class="inline" onsubmit="return confirm('Yakin ingin menghapus supplier ini?')">
+                    <form action="{{ route('admin.supplier.destroy', $item->id_supplier) }}" method="POST" class="inline" onsubmit="return confirm('Yakin ingin menghapus supplier ini?')">
                         @csrf @method('DELETE')
                         <button type="submit" class="w-9 h-9 rounded-xl bg-slate-50 text-slate-500 hover:text-red-500 hover:bg-red-50 flex items-center justify-center transition-all" title="Hapus">
                             <i class="fas fa-trash text-sm"></i>
@@ -163,7 +163,7 @@
         setTimeout(() => { m.classList.add('hidden'); m.classList.remove('flex'); }, 300);
     }
     function editModal(item) {
-        document.getElementById('editForm').action = `/admin/supplier/${item.id}`;
+        document.getElementById('editForm').action = `/admin/supplier/${item.id_supplier}`;
         document.getElementById('edit_name').value = item.name;
         document.getElementById('edit_phone').value = item.phone || '';
         document.getElementById('edit_desc').value = item.description || '';

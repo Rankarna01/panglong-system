@@ -9,12 +9,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('unit_conversions', function (Blueprint $table) {
-            $table->id();
-            // Relasi ke barang (Misal: Paku)
-            $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
+            $table->id('id_unit_conversion');
+            $table->foreignId('id_product')->constrained('products', 'id_product')->onDelete('cascade');
             
             // Relasi ke satuan besarnya (Misal: Dus / Kotak / Sak)
-            $table->foreignId('unit_id')->constrained('units')->onDelete('cascade');
+            $table->foreignId('id_unit')->constrained('units', 'id_unit')->onDelete('cascade');
             
             // Nilai pengali ke Base Unit. Pakai desimal jaga-jaga kalau ada konversi pecahan (Misal 1.5)
             $table->decimal('multiplier', 10, 2); 

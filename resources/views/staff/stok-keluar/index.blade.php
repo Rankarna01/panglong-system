@@ -49,7 +49,7 @@
                             <span class="px-3 py-1.5 bg-red-50 text-red-600 font-bold text-lg rounded-xl">- {{ $item->qty }}</span>
                         </td>
                         <td class="p-4 text-center">
-                            <form action="{{ route('gudang.stok-keluar.destroy', $item->id) }}" method="POST" class="inline" onsubmit="return confirm('Batal input? Riwayat ini akan dihapus dan stok akan dikembalikan.')">
+                            <form action="{{ route('gudang.stok-keluar.destroy', $item->id_stock_out) }}" method="POST" class="inline" onsubmit="return confirm('Batal input? Riwayat ini akan dihapus dan stok akan dikembalikan.')">
                                 @csrf @method('DELETE')
                                 <button type="submit" class="w-8 h-8 rounded-lg bg-red-50 text-red-500 flex items-center justify-center hover:bg-red-500 hover:text-white transition-all" title="Batal & Kembalikan Stok">
                                     <i class="fas fa-undo-alt text-xs"></i>
@@ -91,10 +91,10 @@
 
                 <div>
                     <label class="block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wider">Pilih Barang</label>
-                    <select name="product_id" required class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-sm text-slate-700">
+                    <select name="id_product" required class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-sm text-slate-700">
                         <option value="">Cari/Pilih Barang...</option>
-                        @foreach($products as $prod)
-                            <option value="{{ $prod->id }}">{{ $prod->code }} - {{ $prod->name }} (Sisa: {{ $prod->stock }})</option>
+                        @foreach($products as $p)
+                            <option value="{{ $p->id_product }}">{{ $p->code }} - {{ $p->name }} (Sisa Stok: {{ $p->stock }})</option>
                         @endforeach
                     </select>
                     <p class="text-[10px] text-slate-400 mt-1">*Hanya menampilkan barang yang memiliki stok.</p>

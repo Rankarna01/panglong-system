@@ -40,26 +40,21 @@ class ProductCheckController extends Controller
                 'reference' => $item->reference,
                 'description' => 'Penerimaan dari Supplier',
                 'qty_change' => '+' . $item->qty,
-                'user' => $item->user->name ?? 'Sistem',
-                'color' => 'emerald'
-            ];
+        $stockIns = StockIn::with('user')->where('id_product', $id)->get()->map(function($item) {
+            $item->type = 'in';
+            $item->desc = 'Pembelian dari Supplier (' . ($item->supplier->name ?? '-') . ')';
+            return $item;
         });
 
-        // 3. Kumpulkan Histori Barang Keluar (Rusak/Retur/dll)
-        $stockOuts = StockOut::with('user')->where('product_id', $id)->get()->map(function($item) {
-            return [
-                'date' => $item->created_at,
-                'type' => 'Keluar',
-                'reference' => $item->reference,
-                'description' => $item->reason ?? 'Pengeluaran Manual',
-                'qty_change' => '-' . $item->qty,
-                'user' => $item->user->name ?? 'Sistem',
-                'color' => 'red'
-            ];
+        $stockOuts = StockOut::with('user')->where('id_product', $id)->get()->map(function($item) {
+            $item->type = 'out';
+            $item->desc = 'Barang Keluar: ' . $item->reason;
+            return $item;
         });
 
-        // 5. Kumpulkan Histori Penjualan (Kasir POS)
-        $sales = SaleDetail::with(['sale.user'])->where('product_id', $id)->get()->map(function($item) {
+        // 2) Ambil data Penjualan (Kasir)
+        // Kita butuh relasi ke Sale -> User (Kasir)
+        $sales = SaleDetail::with(['sale.user'])->where('id_product', $id)->get()->map(function($item) {
             return [
                 'date' => $item->created_at,
                 'type' => 'Terjual',

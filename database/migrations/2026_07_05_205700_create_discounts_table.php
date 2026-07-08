@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('discounts', function (Blueprint $table) {
-            $table->id();
+            $table->id('id_discount');
             $table->string('name');
             $table->enum('type', ['percentage', 'nominal']);
             $table->decimal('value', 15, 2);

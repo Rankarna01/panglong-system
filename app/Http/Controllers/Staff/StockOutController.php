@@ -25,7 +25,7 @@ class StockOutController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'product_id' => 'required|exists:products,id',
+            'id_product' => 'required|exists:products,id_product',
             'qty' => 'required|numeric|min:1',
             'date' => 'required|date',
             'reason' => 'required|string|max:255',
@@ -33,7 +33,7 @@ class StockOutController extends Controller
 
         try {
             DB::transaction(function () use ($request) {
-                $product = Product::findOrFail($request->product_id);
+                $product = Product::findOrFail($request->id_product);
 
                 // Proteksi: Cek apakah stok cukup
                 if ($product->stock < $request->qty) {
@@ -46,8 +46,8 @@ class StockOutController extends Controller
                 // 2. Simpan Data Stok Keluar
                 StockOut::create([
                     'reference' => $reference,
-                    'product_id' => $request->product_id,
-                    'user_id' => Auth::id(),
+                    'id_product' => $request->id_product,
+                    'id_user' => Auth::id(),
                     'qty' => $request->qty,
                     'date' => $request->date,
                     'reason' => $request->reason,
@@ -70,7 +70,7 @@ class StockOutController extends Controller
                 $stockOut = StockOut::findOrFail($id);
                 
                 // Kembalikan stok barang karena riwayat dibatalkan (salah input)
-                $product = Product::findOrFail($stockOut->product_id);
+                $product = Product::findOrFail($stockOut->id_product);
                 $product->increment('stock', $stockOut->qty);
 
                 // Hapus data riwayat
